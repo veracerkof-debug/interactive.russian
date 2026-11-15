@@ -175,6 +175,31 @@ JS = [
     'src/chapters/slovosoch/classic.js',
     'src/chapters/slovosoch/tests.js',
     'src/chapters/slovosoch/index.js',
+    'src/chapters/vtor/lessons.js',
+    'src/chapters/vtor/bank.js',
+    'src/chapters/vtor/classic.js',
+    'src/chapters/vtor/tests.js',
+    'src/chapters/vtor/index.js',
+    'src/chapters/prostoe/lessons.js',
+    'src/chapters/prostoe/bank.js',
+    'src/chapters/prostoe/classic.js',
+    'src/chapters/prostoe/tests.js',
+    'src/chapters/prostoe/index.js',
+    'src/chapters/odnosost/lessons.js',
+    'src/chapters/odnosost/bank.js',
+    'src/chapters/odnosost/classic.js',
+    'src/chapters/odnosost/tests.js',
+    'src/chapters/odnosost/index.js',
+    'src/chapters/odnor/lessons.js',
+    'src/chapters/odnor/bank.js',
+    'src/chapters/odnor/classic.js',
+    'src/chapters/odnor/tests.js',
+    'src/chapters/odnor/index.js',
+    'src/chapters/glavn/lessons.js',
+    'src/chapters/glavn/bank.js',
+    'src/chapters/glavn/classic.js',
+    'src/chapters/glavn/tests.js',
+    'src/chapters/glavn/index.js',
     'src/chapters/mezhdom/lessons.js',
     'src/chapters/mezhdom/bank.js',
     'src/chapters/mezhdom/classic.js',
@@ -250,6 +275,11 @@ JS = [
     'src/chapters/raznye/labs.js',
     'src/chapters/znakisvod/labs.js',
     'src/chapters/slovosoch/labs.js',
+    'src/chapters/vtor/labs.js',
+    'src/chapters/prostoe/labs.js',
+    'src/chapters/odnosost/labs.js',
+    'src/chapters/odnor/labs.js',
+    'src/chapters/glavn/labs.js',
     'src/chapters/mezhdom/labs.js',
     'src/chapters/sluzh/labs.js',
     'src/chapters/slitno/labs.js',
@@ -276,7 +306,7 @@ JS = [p for p in JS if not (p.startswith('src/chapters/') and p.split('/')[2] in
 def read(p):
     with open(os.path.join(ROOT, p), encoding='utf-8') as f: return f.read()
 # ключи упражнений в тетрадь: поле key:'…' в src/chapters/*/classic.js
-KEY_RE = re.compile(r"\s*key:'(?:[^'\\]|\\.)*'")
+KEY_RE = re.compile(r"""\s*key:(?:'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")""")
 def js_for(teacher):
     out = ['const TEACHER=%s;\n' % ('true' if teacher else 'false')]
     for p in JS:

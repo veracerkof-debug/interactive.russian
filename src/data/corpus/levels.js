@@ -22,7 +22,7 @@ const OPORY={
  shipyashie:{need:['sostav','sush','pril','glag']},znaki:{need:['pristavki','sush','pril','glag']},nn:{need:['pril','prichastie','narech']},
  ne:{need:['glag','prichastie','deeprich','mest','chisl','narech','sluzh']},slitno:{need:['narech','sluzh','mest','pril']},propisn:{need:['sush','pril','sostav','sluzh','mezhdom'],prop:['vvod','rech','prostoe']},
  slovosoch:{need:['sush','pril','chisl','mest','glag','prichastie','narech','deeprich','sluzh']},prostoe:{need:['slovosoch']},glavn:{need:['prostoe','glag','sush']},vtor:{need:['glavn','slovosoch']},odnosost:{need:['glavn']},
- odnor:{need:['prostoe']},obos:{need:['vtor','prichastie','odnor']},obos2:{need:['obos','deeprich']},vvod:{need:['vtor']},
+ odnor:{need:['prostoe']},obos:{need:['vtor','prichastie','odnor']},obos2:{need:['obos','deeprich']},vvod:{need:['vtor','odnor','obos2','mezhdom']},
  slozhnoe:{need:['glavn','odnosost','odnor','obos','obos2','vvod','mest','sluzh']},ssp:{need:['slozhnoe']},spp:{need:['slozhnoe','mest']},spp2:{need:['spp']},bsp:{need:['ssp','spp']},raznye:{need:['ssp','spp2','bsp']},
  rech:{need:['slozhnoe','vvod']},znakisvod:{need:['raznye','rech','obos2','vvod']},
  tekst:{need:['prostoe']},tipy:{need:['tekst']},stili:{need:['leks','vvod','tekst','tipy']},vyraz:{need:['leks','fraz','stili']},

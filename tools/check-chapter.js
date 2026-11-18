@@ -96,14 +96,18 @@ T.forEach((s,i)=>{const n=`тест [${i}] урок ${s.l}`;tl[s.l]=(tl[s.l]||0)
   if(Array.isArray(x)&&s.k==='sort'&&s.cats&&!s.cats.includes(x[1]))err(`${n}: категория «${x[1]}» не в cats`)})});
 for(let l=1;l<=NL;l++)if((tl[l]||0)<8)err(`тесты, урок ${l}: ${tl[l]||0} слотов (нужно 8)`);
 
-// 8. повторы слов в заданиях (тренажёр, упражнения, тесты; без теории и ключей)
-const text=[...B.filter(b=>b&&b.w).map(b=>b.w),...X.map(e=>e.body+' '+e.obr),...T.flatMap(s=>(s.items||[]).map(x=>Array.isArray(x)?x[0]:(x.o||[]).join(' ')))].join(' ').toLowerCase().replace(/[́]/g,'');
-const STOP=new Set(('если когда чтобы который которая которые потому очень этот этого было были будет может можно нужно потом '+
- 'слова слово слове слов предложение предложения пояснения сколько какое какой какая каком какие первый второй последний способов способом '+
- 'звук звука звуки звуков буква буквы букв слог слога слоги слогов перенос переноса переносится ударение ударения ударный ударная').split(' '));
-const freq={};for(const w of text.match(/[а-яё]{4,}/g)||[])if(!STOP.has(w))freq[w]=(freq[w]||0)+1;
-const many=Object.entries(freq).filter(([,c])=>c>6).sort((a,b)=>b[1]-a[1]);
-if(many.length)warn('повторы слов в заданиях (обычное слово — 2–3 раза, трудное — до 5–6): '+many.slice(0,15).map(([w,c])=>w+' ×'+c).join(', '));
+// 8. повторы слов в заданиях (тренажёр, упражнения, тесты; без теории, подписей цитат, ключей).
+// Е.4 (18.11.2026): считаются леммы (pymorphy3 через tools/povtory.py --json); предлоги, союзы, частицы, местоимения,
+// числительные, слова-меры и термины глоссария вне нормы. Слова окружения — меньше 10 мест (bsp, spp2 — не больше 14);
+// слова-основы (строка «Леммы-основы: …» в docs/plans/<id>.md) — не больше 10.
+let rep=null;
+try{rep=JSON.parse(cp.execFileSync('python3',['-I',path.join(ROOT,'tools/povtory.py'),id,'--json'],{stdio:['ignore','pipe','pipe'],maxBuffer:1<<26}).toString())}catch(e){rep=null}
+if(rep){
+ const bad=Object.entries(rep.slova).filter(([w,v])=>rep.osn.includes(w)?v.length>10:v.length>rep.lim).sort((a,b)=>b[1].length-a[1].length);
+ if(bad.length)warn(`повторы слов в заданиях (по леммам; окружение — не больше ${rep.lim} мест, слово-основа — не больше 10; \`python3 tools/povtory.py ${id} 10\`): `+bad.slice(0,15).map(([w,v])=>w+' ×'+v.length).join(', '))
+}else{
+ warn('повторы слов: лемматизация недоступна (нужны python3 и pymorphy3) — проверьте `python3 tools/povtory.py '+id+' 10` отдельно');
+}
 
 // 9. транскрипция: школьная запись, как в «Звуках и буквах» — [й'], мягкость ', без [ъ] [ь] и без букв е ё ю я внутри скобок
 const all=JSON.stringify([L,B,X,T]);

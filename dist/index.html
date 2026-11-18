@@ -872,6 +872,27 @@ h4[id],.bkles{scroll-margin-top:72px}
 .mewipe .mebox{margin-top:8px}
 .mered{color:var(--red)}
 .mebtns .mered2{background:var(--red);color:#fff}
+
+/* серия «дни подряд» и маскот: токены темы, без своих цветов — тёмная тема подхватывается сама */
+.hmsk{display:flex;gap:14px;align-items:center}
+.hmsk .b{min-width:0;flex:1 1 auto}
+.hmsk .hmh{margin:0 0 2px}
+.hmsk .hmnote{margin:2px 0}
+.hmnote.sm{font-size:12px;color:var(--l3)}
+.mk{flex:0 0 auto;width:72px;height:72px;overflow:visible}
+.mk-sh{fill:var(--fill2)}
+.mk-body,.mk-ear{fill:color-mix(in srgb,var(--tint) 55%,var(--cell));stroke:color-mix(in srgb,var(--tint) 75%,var(--ink));stroke-width:2;stroke-linejoin:round}
+.mk-belly{fill:color-mix(in srgb,var(--tint) 18%,var(--cell))}
+.mk-ch{fill:color-mix(in srgb,var(--red) 35%,var(--cell));opacity:.7}
+.mk-i{fill:var(--ink)}.mk-s{fill:var(--cell)}
+.mk-e,.mk-m{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
+.mk-beak{fill:var(--tint);stroke:var(--tint-text);stroke-width:1;stroke-linejoin:round}
+.mk-sp{fill:var(--tint)}
+.mk-w{stroke:var(--tint-text);stroke-width:2.6;stroke-linecap:round}.mk-b{stroke:none}
+.mk-happy{animation:mkhop 2.4s ease-in-out 1}
+@keyframes mkhop{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}60%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.mk-happy{animation:none}}
+@media (max-width:380px){.hmsk{gap:10px}.mk{width:60px;height:60px}}
 /* Широкие экраны (компьютер, ≥1100px): страница шире, в главе — боковое содержание.
    На телефоне и планшете ничего не меняется: .chside скрыт, .chgrid — обычный поток. */
 .chside{display:none}
@@ -89843,7 +89864,7 @@ function linkWords(root){
 //   S.seen  {<id урока>: 1}                — урок открывали
 //   S.at    {ch,tab,l}                     — где ученик остановился (для «Продолжить»)
 //   S.recent [{ch,r,at}]                   — последние 3 открытых задания #ex-<глава>-<номера>
-// Показатель вовлечённости — не оценка (решение 13). Очков, серий и рейтингов нет (docs/plans/home-research.md).
+// Показатель вовлечённости — не оценка (решение 13). Очков и рейтингов нет; «дни подряд» (streakInfo) считаются из S.time, не хранятся и ничего не штрафуют (docs/plans/home-research.md).
 
 // Пороги — предложение, решает владелец.
 const ST={
@@ -89872,6 +89893,17 @@ function weekDays(off=0){
  const now=new Date(),t=dayKey(now),mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-((now.getDay()+6)%7)-7*off),T=S.time||{};
  return WD.map((wd,i)=>{const d=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i),k=dayKey(d),sec=+T[k]||0;
   return {wd,k,d,sec,on:sec>=ST.DAY_MIN,today:k===t,fut:k>t}});
+}
+// ----- серия «дни подряд» -----
+// Ничего не хранится: серия считается из S.time (дни, где набралось ST.DAY_MIN секунд активного времени по правилу 5 минут).
+// Откат статистики учителем (правка S.time) пересчитывает серию сам. Не оценка, не очки, не рейтинг (решение 13).
+// → {n: дней подряд, today: сегодня засчитан, alive: серия ещё идёт (сегодня или вчера был день занятий), best: лучшая за хранимые дни, st: 'happy'|'nudge'|'calm'}
+function streakInfo(now=new Date()){
+ const T=(S&&S.time)||{},on=d=>(+T[dayKey(d)]||0)>=ST.DAY_MIN,y=now.getFullYear(),m=now.getMonth(),dd=now.getDate();
+ const today=on(now);let n=0,i=today?0:1;
+ while(i<=ST.DAYS&&on(new Date(y,m,dd-i))){n++;i++}
+ let best=0,run=0;for(let k=ST.DAYS;k>=0;k--){if(on(new Date(y,m,dd-k))){run++;if(run>best)best=run}else run=0}
+ return {n,today,alive:n>0,best,st:today?'happy':n>0?'nudge':'calm'};
 }
 const weekTime=(off=0)=>weekDays(off).reduce((s,x)=>s+x.sec,0);
 
@@ -90001,7 +90033,7 @@ function stateReset(){TR.run=null;TR.ch=null;TS=null;TSV='list';CLR=null;CLF=0;T
 function bkApply(d){S=normS(d);timePrune();stateReset();save()}
 function wipeAll(){S=S_NEW();stateReset();try{localStorage.removeItem(KEY)}catch(e){}save()}
 
-if(window.__T)Object.assign(window.__T,{ST,lessonLevel,weakLessons,unfinished,weekDays,weekTime,statAns,bkText,bkRead,getS:()=>S,timeFlush});
+if(window.__T)Object.assign(window.__T,{ST,lessonLevel,weakLessons,unfinished,weekDays,weekTime,streakInfo,statAns,bkText,bkRead,getS:()=>S,timeFlush});
 // ---------- главная (#home) и кабинет «Мои результаты» (#me) ----------
 // Главная — про действие: «Продолжить», «Учебник», заданное, что повторить; цифры — вторым планом, время — последним.
 // Расчёты — в stats.js. Клики — по data-h*, data-me*, data-bk, data-wipe (свой обработчик внизу файла).
@@ -90044,6 +90076,36 @@ function contHTML(){
  <span class="hmwhere">${modeIco(tab,16)}<span>${CONT_TAB[tab]}</span>${v&&v.lv>1?`<span class="hmdot"></span>${stepsHTML(v.lv)}<span>${v.word}</span>`:''}</span>
  <span class="hmcta">${CONT_GO[tab]}${HI.chev}</span></button>`;
 }
+// ---------- серия «дни подряд» и маскот ----------
+// Маскот — простой SVG-совёнок на токенах темы; состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
+function mascotHTML(st){
+ const eyes=st==='happy'?'<path class="mk-e" d="M33 41q4-6 8 0M59 41q4-6 8 0" fill="none"/>'
+  :st==='nudge'?'<circle class="mk-i" cx="37" cy="41" r="4"/><circle class="mk-i" cx="63" cy="41" r="4"/><circle class="mk-s" cx="38.5" cy="39.5" r="1.3"/><circle class="mk-s" cx="64.5" cy="39.5" r="1.3"/>'
+  :'<path class="mk-e" d="M33 42q4 4 8 0M59 42q4 4 8 0" fill="none"/>';
+ const mouth=st==='happy'?'<path class="mk-m" d="M44 52q6 6 12 0" fill="none"/>':st==='nudge'?'<path class="mk-m" d="M46 53q4 3 8 0" fill="none"/>':'<path class="mk-m" d="M46 54h8" fill="none"/>';
+ const extra=st==='happy'?'<path class="mk-sp" d="M84 18l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM14 28l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5L9 33l3.5-1.5z"/>'
+  :st==='nudge'?'<path class="mk-w" d="M88 52q6-4 6-12" fill="none"/>':'';
+ return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="72" height="72" role="img" aria-label="${st==='happy'?'Совёнок радуется':st==='nudge'?'Совёнок ждёт':'Совёнок спокоен'}">
+ <ellipse class="mk-sh" cx="50" cy="92" rx="26" ry="4"/>
+ <path class="mk-ear" d="M26 24l6 12 8-8zM74 24l-6 12-8-8z"/>
+ <path class="mk-body" d="M50 20c-20 0-30 14-30 34 0 20 12 34 30 34s30-14 30-34c0-20-10-34-30-34z"/>
+ <ellipse class="mk-belly" cx="50" cy="68" rx="17" ry="17"/>
+ <circle class="mk-ch" cx="29" cy="50" r="4"/><circle class="mk-ch" cx="71" cy="50" r="4"/>
+ ${eyes}<path class="mk-beak" d="M47 47h6l-3 5z"/>
+ ${mouth}${extra}</svg>`;
+}
+const dayWord=n=>plural(n,'день','дня','дней');
+function streakHTML(me){
+ const k=streakInfo();
+ const head=k.today?`${k.n} ${dayWord(k.n)} подряд`:k.alive?`${k.n} ${dayWord(k.n)} подряд`:'Дни занятий подряд';
+ const msg=k.st==='happy'?(k.n>1?'Сегодня день засчитан. Так держать — без спешки.':'Сегодня день засчитан. Хорошее начало.')
+  :k.st==='nudge'?'Сегодня ещё не занимались. Несколько минут — и день засчитается; не получится — ничего страшного.'
+  :'Серия начнётся с первого дня занятий. Пропуски не страшны: счёт можно начать заново в любой день.';
+ return `<section class="hmsec hmbox hmstreak${me?' me':''}" aria-label="Дни занятий подряд"><div class="hmsk">${mascotHTML(k.st)}
+ <div class="b"><h2 class="hmh">${head}</h2><p class="hmnote">${msg}</p>
+ ${me&&k.best>1?`<p class="hmnote">Больше всего подряд за последние месяцы: ${k.best} ${dayWord(k.best)}.</p>`:''}
+ <p class="hmnote sm">День засчитывается, когда набралась минута активных занятий. Это не оценка.</p></div></div></section>`;
+}
 function homeHTML(){
  const ready=ALLCH.filter(m=>CHAPTERS[m.id]),nles=ready.reduce((s,m)=>s+CHAPTERS[m.id].lessons.length,0);
  const hasName=!!((S.prof||{}).name||'').trim(),dl=dateLine();
@@ -90074,6 +90136,8 @@ function homeHTML(){
  const unf=unfinished(3);
  if(unf.length)h+=`<section class="hmsec"><h2 class="hmh">Не доведено до конца</h2><div class="hmlist">${unf.map(u=>{const m=chById(u.c.id);
   return `<button class="hmrow" data-hun="${u.c.id}"><span class="b"><b>${m.t}</b><small>осталось: ${leftText(u.left)}</small></span><span class="hmact">К тестам</span></button>`}).join('')}</div></section>`;
+ // дни подряд
+ h+=streakHTML(false);
  // моя неделя
  const wk=weekDays(0),wt=wk.reduce((s,x)=>s+x.sec,0);
  h+=`<section class="hmsec hmbox hmweek"><h2 class="hmh">Моя неделя</h2>
@@ -90161,7 +90225,7 @@ function meDataHTML(){
 function meHTML(){
  return `<div class="bkhbar"><div class="in"><button class="back" data-hgo="home">‹ Главная</button><span class="tools"><button class="ibtn" data-hgo="toc">${ico('book',18)}Учебник</button></span></div></div>
  <div class="wrap me"><header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><h2>Мои результаты</h2><div class="sub">Что уже получается и к чему стоит вернуться.</div></div></header>
- <div class="megrid"><div class="mecol">${meProfHTML()}${meTopicsHTML()}</div><div class="mecol">${meTimeHTML()}${meNoteHTML()}${meDataHTML()}</div></div></div>`;
+ <div class="megrid"><div class="mecol">${meProfHTML()}${meTopicsHTML()}</div><div class="mecol">${streakHTML(true)}${meTimeHTML()}${meNoteHTML()}${meDataHTML()}</div></div></div>`;
 }
 function meRe(focus){const y=window.scrollY;render();window.scrollTo(0,y);if(focus){const el=document.querySelector(focus);if(el){el.focus({preventScroll:true});el.scrollIntoView({block:'nearest'})}}}
 function meBind(){

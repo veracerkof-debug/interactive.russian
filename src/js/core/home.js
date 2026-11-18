@@ -41,7 +41,7 @@ function contHTML(){
  <span class="hmcta">${CONT_GO[tab]}${HI.chev}</span></button>`;
 }
 // ---------- серия «дни подряд» и маскот ----------
-// Маскот — простой SVG-совёнок на токенах темы; состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
+// Маскот — простой SVG-человечек-буква «Ё» (две точки сверху — «ушки») на токенах темы; состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
 function mascotHTML(st){
  const eyes=st==='happy'?'<path class="mk-e" d="M33 41q4-6 8 0M59 41q4-6 8 0" fill="none"/>'
   :st==='nudge'?'<circle class="mk-i" cx="37" cy="41" r="4"/><circle class="mk-i" cx="63" cy="41" r="4"/><circle class="mk-s" cx="38.5" cy="39.5" r="1.3"/><circle class="mk-s" cx="64.5" cy="39.5" r="1.3"/>'
@@ -49,13 +49,12 @@ function mascotHTML(st){
  const mouth=st==='happy'?'<path class="mk-m" d="M44 52q6 6 12 0" fill="none"/>':st==='nudge'?'<path class="mk-m" d="M46 53q4 3 8 0" fill="none"/>':'<path class="mk-m" d="M46 54h8" fill="none"/>';
  const extra=st==='happy'?'<path class="mk-sp" d="M84 18l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM14 28l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5L9 33l3.5-1.5z"/>'
   :st==='nudge'?'<path class="mk-w" d="M88 52q6-4 6-12" fill="none"/>':'';
- return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="72" height="72" role="img" aria-label="${st==='happy'?'Совёнок радуется':st==='nudge'?'Совёнок ждёт':'Совёнок спокоен'}">
+ return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="72" height="72" role="img" aria-label="${st==='happy'?'Ёшка радуется':st==='nudge'?'Ёшка ждёт':'Ёшка спокоен'}">
  <ellipse class="mk-sh" cx="50" cy="92" rx="26" ry="4"/>
- <path class="mk-ear" d="M26 24l6 12 8-8zM74 24l-6 12-8-8z"/>
+ <circle class="mk-ear" cx="35" cy="13" r="6"/><circle class="mk-ear" cx="65" cy="13" r="6"/>
  <path class="mk-body" d="M50 20c-20 0-30 14-30 34 0 20 12 34 30 34s30-14 30-34c0-20-10-34-30-34z"/>
- <ellipse class="mk-belly" cx="50" cy="68" rx="17" ry="17"/>
  <circle class="mk-ch" cx="29" cy="50" r="4"/><circle class="mk-ch" cx="71" cy="50" r="4"/>
- ${eyes}<path class="mk-beak" d="M47 47h6l-3 5z"/>
+ ${eyes}
  ${mouth}${extra}</svg>`;
 }
 const dayWord=n=>plural(n,'день','дня','дней');

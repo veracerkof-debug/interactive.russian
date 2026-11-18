@@ -80,6 +80,29 @@ X.forEach(e=>{if(!e||!e.body)return;const n=`упражнение №${e.n}`;
  const parts=String(e.body).replace(/<br\s*\/?>/g,' ').split(/(?:^|\s)\d{1,2}[.)]\s/).map(x=>x.replace(/\([А-ЯЁ]\. .*?\)|Пояснения:.*$/g,'').trim()).filter(x=>x.length>8);
  if(parts.length>=5&&!e.os){const L=parts.map(x=>x.split(/\s+/).length),m=L.reduce((a,b)=>a+b,0)/L.length,sd=Math.sqrt(L.reduce((a,b)=>a+(b-m)**2,0)/L.length);
   if(sd/m<0.22)warn(`${n}: предложения почти одной длины (${Math.min(...L)}–${Math.max(...L)} слов) — нужны и короткие, и длинные (PRINCIPLES §4.12)`)}});
+// место явления (решение владельца 06.11.2026 и 18.11.2026: «проверять, чтобы был рандом и разнообразие»):
+// искомое — пропуск «..»/«_» в условии или знак, которого нет в условии, но есть в ключе (запятая, ;, :, тире);
+// считаем относительную позицию слова в предложении и смотрим, равномерно ли оно разбросано по началу, середине и концу
+{const SPL=/(?:^|\s)\d{1,2}[.)]\s/,CL=x=>x.replace(/\([А-ЯЁ]\. .*?\)|Пояснения:.*$/g,'').split(/\s+[—–]\s+(?=[а-яёА-ЯЁ«"(]|«)/)[0].trim();
+ const pts=[],per=[];
+ X.forEach(e=>{if(!e||!e.body||e.os)return;
+  if(/\)[¹²³⁴]/.test(String(e.body)))return; // линейные схемы: «…» — не пропуск
+  const bs=String(e.body).replace(/<br\s*\/?>/g,' ').split(SPL).map(x=>x.replace(/\([А-ЯЁ]\. .*?\)|Пояснения:.*$/g,'').trim()).filter(Boolean);
+  const ks=String(e.key||'').replace(/<br\s*\/?>/g,' ').split(SPL).map(CL).filter(Boolean);
+  const mine=[];
+  bs.forEach((b,i)=>{const bt=b.split(/\s+/);if(bt.length<4)return;
+   const gaps=[];const mnog=/многоточ/i.test(String(e.task||''));bt.forEach((t,j)=>{if(t.includes('>'))return;if(!mnog&&j===bt.length-1&&/[а-яё]…$/i.test(t))return;if(/\.\.|…|_/.test(t))gaps.push(j)});
+   if(gaps.length){gaps.forEach(j=>mine.push(j/(bt.length-1)));return}
+   const k=ks[i];if(!k||ks.length!==bs.length)return;const kt=k.split(/\s+/);
+   const clean=t=>t.replace(/[,;:—–!?.«»"()]/g,'').toLowerCase();
+   const kw=kt.filter(t=>clean(t)),bw=bt.filter(t=>clean(t));if(kw.length!==bw.length)return;
+   kw.forEach((t,j)=>{if(/[,;:]$/.test(t)&&!/[,;:]$/.test(bw[j]))mine.push(j/(kw.length-1))});
+  });
+  mine.forEach(v=>pts.push(v));if(mine.length>=6)per.push([e.n,mine]);});
+ const B3=v=>v<1/3?0:v<2/3?1:2,NM=['в начале','в середине','в конце'];
+ if(pts.length>=40){const c=[0,0,0];pts.forEach(v=>c[B3(v)]++);const mx=Math.max(...c)/pts.length,mn=Math.min(...c)/pts.length;
+  if(mx>0.55||mn<0.12)warn(`место явления: искомое ${NM[c.indexOf(Math.max(...c))]} предложения — ${(mx*100).toFixed(0)} % из ${pts.length} (в начале ${c[0]}, в середине ${c[1]}, в конце ${c[2]}); нужен разброс по всему предложению (норма: каждая треть 12–55 %)`);}
+ per.forEach(([n,m])=>{const c=[0,0,0];m.forEach(v=>c[B3(v)]++);if(Math.max(...c)/m.length>=0.85)warn(`упражнение №${n}: всё искомое (${m.length}) ${NM[c.indexOf(Math.max(...c))]} предложений — менять позиции`)})}
 const sorted=[...ns].sort((a,b)=>a-b);if(sorted.length&&sorted[sorted.length-1]!==sorted.length)warn('номера упражнений не идут подряд 1…N (пропуски допустимы, только если номер когда-то удалён)');
 if(X.length<=B.length)err(`упражнений в тетрадь ${X.length}, заданий тренажёра ${B.length}: упражнений должно быть больше (решение владельца)`);
 

@@ -1,0 +1,36 @@
+/* Печать из приложения: чистая чёрно-белая вёрстка текущего экрана (Ctrl+P).
+   Без шапки, навигации, кнопок и отметок прогресса; разрывы страниц не режут таблицы, блоки и упражнения.
+   Печатная книга целиком (главы, упражнения, тесты, ключи) — tools/print.py и src/css/printbook.css. */
+@media print{
+  @page{size:A4;margin:16mm 14mm 18mm}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    --bg:#fff;--cell:#fff;--ink:#000;--l2:#444;--l3:#777;--sep:#999;--fill:#eee;--fill2:#ddd;
+    --tint:#000;--tint-text:#000;--on-tint:#fff;--red:#000;
+    --T:#222;--S:#222;--D:#222;--V:#222;--A:#222;--M:#222;--K:#222;color-scheme:light}
+  html,body{background:#fff!important;color:#000!important;font-size:11pt;line-height:1.4}
+  body::before{display:none}
+  *{box-shadow:none!important;text-shadow:none!important;animation:none!important;transition:none!important}
+  /* интерфейс, который на бумаге бессмыслен */
+  .bkhbar,.chside,.seg,.bklnav,.fab,.bpn,.navside,.easy,.needbar,.toast,.sheet,.sheetbg,
+  .bklex .top,.bklex .prac,.bkldone,.bkhint,.pill,.cllink,.clfind,.clnav,.cmleg,.clmap,.stend,.tools,
+  .otl,.linkbtn,.pbtn,[data-clform]{display:none!important}
+  .wrap,.wpage,.chmain,.chgrid{display:block!important;max-width:none!important;padding:0!important;margin:0!important}
+  .chmain>*{margin-bottom:10px}
+  /* термины и ссылки — обычный текст */
+  .bterm,button.xref,a{background:none!important;border:0!important;padding:0!important;color:#000!important;text-decoration:none!important;font:inherit}
+  .bkles{margin-top:14pt}
+  .chhead{border-bottom:1.5pt solid #000;padding-bottom:6pt;margin-bottom:10pt}
+  h2,h3,h4,.bklh{break-after:avoid;page-break-after:avoid}
+  .bins,.clex,.labslot,.lab,table,tr,figure,pre,.bkhelp,.cbody,svg{break-inside:avoid;page-break-inside:avoid}
+  .bins,.bkhelp,.lab{background:#fff!important;border:.75pt solid #000!important;border-radius:3pt!important}
+  .bins>.h,.bkhelp summary{color:#000!important}
+  details>summary{list-style:none;font-weight:700}
+  details>summary::-webkit-details-marker{display:none}
+  details::details-content{content-visibility:visible;display:block}
+  .stars span{color:#999}
+  table{border-collapse:collapse}th,td{border:.5pt solid #000!important;background:#fff!important}
+  .chok,.okm{display:none}
+  /* цвет — только оттенок серого; смысл (верно/неверно) — подчёркиванием */
+  .ok{text-decoration:underline}
+  .bad{text-decoration:line-through}
+}

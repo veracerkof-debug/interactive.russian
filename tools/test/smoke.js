@@ -189,6 +189,24 @@ const ok=[],fail=[];const check=(c,msg)=>(c?ok:fail).push(msg);
   check(tC===150,`после перерыва счёт идёт дальше (${tC} с)`);
   check(((await LS()).time||{})[DK]>=120,'время записано в localStorage (не чаще раза в 45 с)');
   await q.goto(U+'#home');await q.reload();check((await q.innerText('.hmweek')).includes('3 мин')&&!!await q.$('.hmday.on.td'),'«Моя неделя»: сегодняшний день отмечен, время показано');
+  // серия «дни подряд»: считается из S.time; сегодня засчитан → happy; вчера был, сегодня нет → nudge; откат времени пересчитывает
+  await q.goto(U+'?selftest#home');await q.reload();
+  const sk=await q.evaluate(()=>{const T=window.__T,S=T.getS(),d=new Date(2026,10,11),k=n=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()-n);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+   const run=(o,fn)=>{S.time=o;return T.streakInfo(d)};const r={};
+   r.empty=run({});r.short=run({[k(0)]:30});r.three=run({[k(0)]:90,[k(1)]:90,[k(2)]:90});r.nudge=run({[k(1)]:90,[k(2)]:90});r.gap=run({[k(0)]:90,[k(2)]:90,[k(3)]:90,[k(4)]:90});r.old=run({[k(2)]:90});return r});
+  check(sk.empty.n===0&&sk.empty.st==='calm'&&sk.short.n===0&&sk.short.st==='calm','серия: пусто или меньше минуты — 0, состояние «спокоен»');
+  check(sk.three.n===3&&sk.three.st==='happy'&&sk.three.today,'серия: три дня подряд, сегодня засчитан — 3, «радуется»');
+  check(sk.nudge.n===2&&sk.nudge.st==='nudge'&&!sk.nudge.today,'серия: вчера был, сегодня ещё нет — серия жива, «мягко напоминает»');
+  check(sk.gap.n===1&&sk.gap.best===3&&sk.old.n===0&&sk.old.st==='calm','серия: пропуск обрывает счёт без штрафа, лучшая серия помнится, позавчера — уже не серия');
+  await q.evaluate(()=>{const S=window.__T.getS(),d=new Date(),k=n=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()-n);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};S.time={[k(0)]:120,[k(1)]:120};window.__T.timeFlush()});
+  await q.evaluate(()=>{const S=window.__T.getS();localStorage.setItem('rus-uchebnik-v1',JSON.stringify(S))});
+  await q.goto(U+'#home');await q.reload();
+  check(!!await q.$('.hmstreak svg.mk-happy')&&(await q.innerText('.hmstreak')).includes('2 дня подряд'),'главная: виджет серии и радостный маскот');
+  await q.goto(U+'#me');await q.reload();check(!!await q.$('.hmstreak.me svg.mk'),'кабинет: виджет серии');
+  await q.goto(U+'?selftest#home');await q.reload();
+  await q.evaluate(()=>{const S=window.__T.getS();S.time={};localStorage.setItem('rus-uchebnik-v1',JSON.stringify(S))});
+  await q.goto(U+'#home');await q.reload();
+  check(!!await q.$('.hmstreak svg.mk-calm')&&!(await q.innerText('.hmstreak')).match(/\d+ (день|дня|дней) подряд/),'откат времени (S.time пуст): серия пересчитана, маскот спокоен');
   // профиль
   await q.click('.hmava');check((await hash())==='#me'&&!!await q.$('[data-meform]'),'кабинет открывается, без имени — форма профиля');
   await q.fill('[data-meform] [name=name]','Тимур');await q.fill('[data-meform] [name=sur]','Каримов');await q.fill('[data-meform] [name=cls]','7 Б');await q.press('[data-meform] [name=cls]','Enter');

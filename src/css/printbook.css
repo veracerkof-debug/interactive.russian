@@ -1,0 +1,59 @@
+/* Печатная книга (tools/print.py): предпросмотр на экране и печать. Чёрно-белая, без цветных заливок. */
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+  --bg:#fff;--cell:#fff;--ink:#000;--l2:#444;--l3:#777;--sep:#999;--fill:#eee;--fill2:#ddd;
+  --tint:#000;--tint-text:#000;--on-tint:#fff;--red:#000;--T:#222;--S:#222;--D:#222;--V:#222;--A:#222;--M:#222;--K:#222;color-scheme:light}
+@page{size:A4;margin:16mm 14mm 18mm;@bottom-center{content:counter(page);font-size:9pt}}
+body{background:#fff;color:#000;font-family:Georgia,"Times New Roman",serif;font-size:11.5pt;line-height:1.45}
+body::before{display:none}
+#app{max-width:180mm;margin:0 auto;padding:12mm 8mm}
+.prtitle{text-align:center;padding:60mm 0 20mm;break-after:page}
+.prtitle h1{font-size:34pt;margin:0}
+.prtoc{break-after:page}.prtoc ol{line-height:1.8}.prtoc a{color:#000;text-decoration:none}
+.prch{break-before:page}.prch:first-child{break-before:auto}
+.prchh{border-bottom:2pt solid #000;margin-bottom:10pt}
+.prchh h1{font-size:26pt;margin:2pt 0}
+.prkick{font:700 8.5pt/1.2 sans-serif;letter-spacing:.05em;text-transform:uppercase}
+.prsub{font-size:11pt;color:#444}
+.prh2{font-size:17pt;margin:16pt 0 6pt;break-after:avoid}
+.prh3{font-size:15pt;margin:0 0 8pt;border-bottom:1pt solid #000;break-after:avoid}
+.prh4,.prtheory h4{font-size:12pt;margin:12pt 0 4pt;break-after:avoid}
+.prsec{break-before:page}
+.prles{margin-bottom:6pt}
+.prtheory p,.prbox p{margin:0 0 6pt}
+.prtheory .bins,.prbox,.prlab,.prex,.prq{break-inside:avoid}
+.prtheory .bins{border:.75pt solid #000;border-radius:3pt;background:#fff;padding:5pt 8pt;margin:6pt 0}
+.prtheory .bins>.h{font:700 8.5pt sans-serif;text-transform:uppercase;letter-spacing:.05em}
+.prbox{border:.75pt dashed #000;padding:5pt 8pt;margin:6pt 0}
+.prboxh{font:700 8.5pt sans-serif;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3pt}
+.prlab{border:.75pt solid #000;padding:6pt 8pt;margin:8pt 0;font-family:sans-serif;font-size:10pt;overflow:hidden}
+.prlabno{font-style:italic;color:#444}
+.prlabcap{font-size:8pt;color:#555;margin-top:4pt}
+.prbtn{display:inline-block;border:.5pt solid #000;border-radius:3pt;padding:0 4pt;margin:1pt;background:#fff;color:#000}
+.prlab *{color:#000!important;background:transparent!important;box-shadow:none!important;max-width:100%}
+.prlab svg{max-width:100%;height:auto}
+table{border-collapse:collapse;max-width:100%}th,td{border:.5pt solid #000;padding:2pt 5pt;background:#fff}
+.m,b.m{font-weight:700}
+.prbank{columns:2;column-gap:12mm;padding-left:0;list-style:none;margin:0}
+.prbank li{break-inside:avoid;margin-bottom:2pt}
+.prn{font-weight:700}.propts{color:#444}
+.prex{margin:0 0 9pt;padding-bottom:5pt;border-bottom:.5pt dotted #777}
+.prexh{display:flex;gap:10pt;align-items:baseline;font-family:sans-serif;font-size:10pt}
+.prst{letter-spacing:1px}.pros{font-size:8.5pt;border:.5pt solid #000;padding:0 3pt}
+.prtask{margin:2pt 0;font-weight:700}
+.probr{margin:2pt 0;font-size:10.5pt}
+.prbody{margin:2pt 0}
+.prtest{break-before:page}.prtest:first-of-type{break-before:auto}
+.prname{font-family:sans-serif;font-size:10pt}
+.prqs{padding-left:18pt}.prq{margin-bottom:9pt}
+.prqt{font-weight:700}.prqw{font-size:13pt;margin:2pt 0}
+.prvar{margin:3pt 0 0;padding-left:0;list-style:none}
+.prvar li{display:inline-block;margin-right:16pt}
+.prvar li::before{content:"\2610\00a0"}
+ol.prvar:not(.prsort) li::before{content:"\25CB\00a0"}
+.prsort li{display:block}.prsort li::before{content:none}
+.prline{margin:6pt 0}
+.prkey{margin:0 0 4pt}
+.prkeys p{margin:0 0 4pt}
+.prsrc{font-size:9pt;color:#444;margin-top:18pt;border-top:.5pt solid #000;padding-top:4pt}
+@media screen{body{background:#eee}#app{background:#fff;margin:10px auto;box-shadow:0 0 6px rgba(0,0,0,.3)}}
+@media print{#app{max-width:none;padding:0}}

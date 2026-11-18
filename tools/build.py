@@ -340,6 +340,7 @@ JS = [
     'src/js/core/stats.js',             # статистика на устройстве: ступени уроков, слабые места, время, копия данных
     'src/js/core/home.js',              # главная (#home) и кабинет «Мои результаты» (#me)
     'src/js/core/steps.js',             # маршрут: ступени, «Следующая по маршруту», плашка опор, «Повторение ступени»
+    'src/js/core/printhook.js',         # печать из приложения: раскрыть все блоки перед печатью
     'src/js/core/screens.js',           # экраны, маршруты, обработчики
 ]
 # главы, которые ещё проходят проверки (PRINCIPLES §8, §9.3): в сборку не входят, пока не пройдут проверку и исправление;
@@ -350,9 +351,9 @@ def read(p):
     with open(os.path.join(ROOT, p), encoding='utf-8') as f: return f.read()
 # ключи упражнений в тетрадь: поле key:'…' в src/chapters/*/classic.js
 KEY_RE = re.compile(r"""\s*key:(?:'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")""")
-def js_for(teacher):
+def js_for(teacher, files=None):
     out = ['const TEACHER=%s;\n' % ('true' if teacher else 'false')]
-    for p in JS:
+    for p in (files or JS):
         t = read(p)
         if not teacher and p.endswith('/classic.js') and p.startswith('src/chapters/'):
             t, n = KEY_RE.subn('', t)

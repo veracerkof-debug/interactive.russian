@@ -215,6 +215,11 @@ JS = [
     'src/chapters/spp/classic.js',
     'src/chapters/spp/tests.js',
     'src/chapters/spp/index.js',
+    'src/chapters/spp2/lessons.js',     # глава «СПП с несколькими придаточными»
+    'src/chapters/spp2/bank.js',
+    'src/chapters/spp2/classic.js',
+    'src/chapters/spp2/tests.js',
+    'src/chapters/spp2/index.js',
     'src/chapters/bsp/lessons.js',      # глава «Бессоюзное сложное предложение»
     'src/chapters/bsp/bank.js',
     'src/chapters/bsp/classic.js',
@@ -313,6 +318,7 @@ JS = [
     'src/chapters/obos2/labs.js',
     'src/chapters/vvod/labs.js',
     'src/chapters/spp/labs.js',
+    'src/chapters/spp2/labs.js',
     'src/chapters/bsp/labs.js',
     'src/chapters/ssp/labs.js',
     'src/chapters/glavn/labs.js',

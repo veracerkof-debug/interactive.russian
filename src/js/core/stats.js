@@ -154,7 +154,7 @@ function bkRead(text){
 // привести загруженные данные в порядок: только известные виды значений, ничего лишнего в разметку не попадёт
 function normS(d){
  const n=Object.assign(S_NEW(),d);
- ['done','cards','tests','ans','seen','time','tocOpen'].forEach(k=>{if(!isObj(n[k]))n[k]={}});
+ ['done','cards','tests','ans','seen','time','tocOpen','steps','needx'].forEach(k=>{if(!isObj(n[k]))n[k]={}});
  if(!Array.isArray(n.tlog))n.tlog=[];
  if(!Array.isArray(n.recent))n.recent=[];
  const p=isObj(n.prof)?n.prof:{};n.prof={name:String(p.name||'').slice(0,40),sur:String(p.sur||'').slice(0,40),cls:String(p.cls||'').slice(0,8)};

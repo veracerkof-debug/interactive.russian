@@ -9,7 +9,7 @@ const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math
 const fill=(w,v)=>w.replace('_',v);
 const OPTS=it=>it.opts||['н','нн'];
 // варианты, свои у каждого задания (например, одно слово с разным ударением), — в случайном порядке, иначе верный узнаётся по месту кнопки; общий набор (н/нн, можно/нельзя) — в постоянном порядке
-const OPTU=it=>{if(!it.opts)return false;const k=it.opts.join('|');return CC().bank.filter(b=>b.opts&&b.opts.join('|')===k).length<3};
+const OPTU=it=>{if(!it.opts)return false;const k=it.opts.join('|');return (it.c||CC()).bank.filter(b=>b.opts&&b.opts.join('|')===k).length<3};
 const gap=it=>it.w.includes('_');
 function trPool(){return CC().bank.filter(b=>TR.les.includes(b.l))}
 function groupCols(pool){
@@ -62,13 +62,13 @@ function trSetupHTML(){
 }
 const ok_=t=>`<b style="color:var(--T)">${t}</b>`,bad_='<b style="color:var(--red)">Неверно.</b>';
 function trTaskHTML(t){
- const c=CC();
+ const c=(t.it&&t.it.c)||CC();
  if(t.k==='m')return mechHTML(t);
  if(t.k==='pick'){
   const it=t.it,a=t.ans,op=t.op||(t.op=OPTU(it)?shuffle(OPTS(it)):OPTS(it)),g=gap(it);
   const w=g?esc(it.w).replace('_',`<span class="slot ${a?(a===it.a?'ok':'bad'):''}">${a?it.a:'…'}</span>`):esc(it.w);
   const long=op.some(v=>v.length>4);
-  return `<div class="card"><div class="ty">${it.q||(g?'Выбрать вариант':'Ответить')} · урок ${it.l}</div><div class="word" style="font-size:${g?26:22}px">${w}</div>
+  return `<div class="card"><div class="ty">${it.q||(g?'Выбрать вариант':'Ответить')} · ${it.cn?it.cn+', ':''}урок ${it.l}</div><div class="word" style="font-size:${g?26:22}px">${w}</div>
   <div class="${long?'errl':'ans'}" style="justify-content:center;flex-wrap:wrap">${op.map(v=>{let cl='';if(a){if(v===it.a)cl='ok';else if(v===a)cl='bad'}if(!a&&t.first===v)cl='bad';
    return long?`<button class="opt ${cl?'e'+cl:''}" data-trp="${esc(v)}" ${a||t.first===v?'disabled':''}>${esc(v)}</button>`:`<button data-trp="${esc(v)}" class="${cl}" ${a||t.first===v?'disabled':''} style="min-width:80px;min-height:52px;font-size:19px">${esc(v)}</button>`}).join('')}</div>
   ${t.hinted&&!a?`<div class="obr"><b>Подсказка.</b> ${c.lessons[it.l-1].hint} Попробовать ещё раз.</div>`:''}
@@ -105,6 +105,6 @@ function trRunHTML(){
  <button class="linkbtn" data-trsetup>Закончить и вернуться к настройкам</button>`;
 }
 // каждый ответ — первая попытка на задание; в статистику урока (statAns, stats.js) идёт один раз, повтор ошибок — не идёт
-function trScore(list){const r=TR.run;list.forEach(([it,ok])=>{r.tot++;if(ok)r.ok++;else r.wrong.push(it);if(!r.re)statAns(CC(),it.l,ok)})}
-function trainerHTML(){trSync();return `<div class="study" id="trainer">${TR.run?trRunHTML():trSetupHTML()}</div>`}
+function trScore(list){const r=TR.run;list.forEach(([it,ok])=>{r.tot++;if(ok)r.ok++;else r.wrong.push(it);if(!r.re)statAns(it.c||CC(),it.l,ok)})}
+function trainerHTML(){if(route.v==='step')return stepTrHTML(route.n);trSync();return `<div class="study" id="trainer">${TR.run?trRunHTML():trSetupHTML()}</div>`}
 

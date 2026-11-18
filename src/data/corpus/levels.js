@@ -28,6 +28,25 @@ const OPORY={
  tekst:{need:['prostoe']},tipy:{need:['tekst']},stili:{need:['leks','vvod','tekst','tipy']},vyraz:{need:['leks','fraz','stili']},
  normy:{need:['glag','chisl','mest','slovosoch','glavn']},leknorm:{need:['omon','fraz','stili']}
 };
+// СТУПЕНИ МАРШРУТА (docs/plans/struktura.md, раздел 9): 14 ступеней подряд, главы — в порядке COURSE_ORDER (склейка ch всех ступеней = COURSE_ORDER, проверяет stepsCheck).
+// Метка ступени у главы в содержании, «Следующая по маршруту», «Повторение ступени» (#step-<n>) — всё берётся отсюда.
+const STEPS=[
+ {n:1,t:'Звуки',ch:['zvuki','slog','udar','proizn']},
+ {n:2,t:'Слово и его значение',ch:['leks','omon','fraz']},
+ {n:3,t:'Строение слова',ch:['sostav','slovoobr']},
+ {n:4,t:'Правописание корня и приставки',ch:['koren','soglas','pristavki']},
+ {n:5,t:'Имена',ch:['sush','pril','chisl','mest']},
+ {n:6,t:'Глагол, его формы и наречие',ch:['glag','prichastie','narech','deeprich']},
+ {n:7,t:'Служебные слова и междометия',ch:['sluzh','mezhdom']},
+ {n:8,t:'Правописание по частям речи',ch:['shipyashie','znaki','nn','ne','slitno','propisn']},
+ {n:9,t:'Словосочетание и простое предложение',ch:['slovosoch','prostoe','glavn','vtor','odnosost']},
+ {n:10,t:'Осложнённое предложение',ch:['odnor','obos','obos2','vvod']},
+ {n:11,t:'Сложное предложение',ch:['slozhnoe','ssp','spp','spp2','bsp','raznye']},
+ {n:12,t:'Чужая речь и все знаки',ch:['rech','znakisvod']},
+ {n:13,t:'Текст и стиль',ch:['tekst','tipy','stili','vyraz']},
+ {n:14,t:'Нормы речи',ch:['normy','leknorm']}
+];
+const stepOf=id=>STEPS.find(s=>s.ch.includes(id));
 // «Наречие» стоит перед «Деепричастием» (решение владельца 12.11.2026): деепричастие — среднее между глаголом и наречием.
 // Пропедевтика (PRINCIPLES §3а): глава даёт на месте справку о теме, которую по маршруту изучают позже, —
 // материал этой темы ей доступен (задания не требуют больше справки).

@@ -9,7 +9,7 @@
 """
 import os, re, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CSS = ['src/css/base.css', 'src/css/nav.css', 'src/css/dictionary.css', 'src/css/home.css', 'src/css/wide.css', 'src/css/end.css']
+CSS = ['src/css/base.css', 'src/css/nav.css', 'src/css/dictionary.css', 'src/css/home.css', 'src/css/wide.css', 'src/css/steps.css', 'src/css/end.css']
 JS = [
     'src/js/core/store.js',            # хранилище, PARTS (оглавление курса)
     'src/data/corpus/levels.js',        # общий корпус: порядок изучения тем, уровни доступа, разборы
@@ -215,6 +215,16 @@ JS = [
     'src/chapters/spp/classic.js',
     'src/chapters/spp/tests.js',
     'src/chapters/spp/index.js',
+    'src/chapters/spp2/lessons.js',     # глава «СПП с несколькими придаточными»
+    'src/chapters/spp2/bank.js',
+    'src/chapters/spp2/classic.js',
+    'src/chapters/spp2/tests.js',
+    'src/chapters/spp2/index.js',
+    'src/chapters/bsp/lessons.js',      # глава «Бессоюзное сложное предложение»
+    'src/chapters/bsp/bank.js',
+    'src/chapters/bsp/classic.js',
+    'src/chapters/bsp/tests.js',
+    'src/chapters/bsp/index.js',
     'src/chapters/ssp/lessons.js',
     'src/chapters/ssp/bank.js',
     'src/chapters/ssp/classic.js',
@@ -308,6 +318,8 @@ JS = [
     'src/chapters/obos2/labs.js',
     'src/chapters/vvod/labs.js',
     'src/chapters/spp/labs.js',
+    'src/chapters/spp2/labs.js',
+    'src/chapters/bsp/labs.js',
     'src/chapters/ssp/labs.js',
     'src/chapters/glavn/labs.js',
     'src/chapters/mezhdom/labs.js',
@@ -327,6 +339,8 @@ JS = [
     'src/js/core/dictionary.js',        # карточка слова
     'src/js/core/stats.js',             # статистика на устройстве: ступени уроков, слабые места, время, копия данных
     'src/js/core/home.js',              # главная (#home) и кабинет «Мои результаты» (#me)
+    'src/js/core/steps.js',             # маршрут: ступени, «Следующая по маршруту», плашка опор, «Повторение ступени»
+    'src/js/core/printhook.js',         # печать из приложения: раскрыть все блоки перед печатью
     'src/js/core/screens.js',           # экраны, маршруты, обработчики
 ]
 # главы, которые ещё проходят проверки (PRINCIPLES §8, §9.3): в сборку не входят, пока не пройдут проверку и исправление;
@@ -337,9 +351,9 @@ def read(p):
     with open(os.path.join(ROOT, p), encoding='utf-8') as f: return f.read()
 # ключи упражнений в тетрадь: поле key:'…' в src/chapters/*/classic.js
 KEY_RE = re.compile(r"""\s*key:(?:'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")""")
-def js_for(teacher):
+def js_for(teacher, files=None):
     out = ['const TEACHER=%s;\n' % ('true' if teacher else 'false')]
-    for p in JS:
+    for p in (files or JS):
         t = read(p)
         if not teacher and p.endswith('/classic.js') and p.startswith('src/chapters/'):
             t, n = KEY_RE.subn('', t)

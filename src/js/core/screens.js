@@ -14,6 +14,8 @@ function hashFor(r){
  if(r.v==='deck')return 'deck-'+r.id;
  if(r.v==='study')return 'study-'+r.id;
  if(r.v==='home'||r.v==='me')return r.v;
+ if(r.v==='step')return 'step-'+r.n;
+ if(r.v==='opc')return 'opc-'+r.id;
  if(r.v!=='ch')return viewHash();
  const ch=CHAPTERS[r.id],tab=ch?chTab(ch):'theory';
  if(CLR&&tab==='classic')return 'ex-'+r.id+'-'+clFmt(CLR,true);
@@ -50,6 +52,10 @@ function fromHash(){const h=location.hash.slice(1);
   if(S.tab==='classic'){CLF=n}
   if(S.tab==='tests'){const k=l==='final'?'final':n;TSV=TS&&TS.ch===id&&k&&TS.key===k?'run':'list'}
   return}
+ const sm=h.match(/^step-(\d+)$/);
+ if(sm&&STEPS[sm[1]-1]){route={v:'step',n:+sm[1]};TSV=TS&&TS.step===route.n?'run':'list';return}
+ const om=h.match(/^opc-([a-z0-9_]+)$/);
+ if(om&&opcOk(om[1])){route={v:'opc',id:om[1]};TSV=TS&&TS.opc===om[1]?'run':'list';return}
  if(h===''||h==='home'){route={v:'home'};return}
  if(h==='me'){route={v:'me'};return}
  if(h.startsWith('w-')) route={v:'word',id:decodeURIComponent(h.slice(2))};
@@ -97,7 +103,8 @@ function chapterHTML(id){
  const prev=ALLCH[idx-1],next=ALLCH[idx+1];
  let h=`<div class="bkhbar"><div class="in"><button class="back" data-home>‹ Оглавление</button><span class="tools"><span class="where">${meta.part.t} · ${meta.part.ch.indexOf(meta)+1} из ${meta.part.ch.length}</span>${ch?`<button class="ibtn" data-outline="${id}" aria-label="Содержание главы"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Содержание</button>`:''}</span></div></div><div class="wrap${ch?' chwide':''}">`;
  if(ch)h+=`<div class="chgrid">${chSide(id)}<div class="chmain">`;
- h+=`<header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div class="kick">Глава ${meta.part.n}.${meta.part.ch.indexOf(meta)+1}${ch&&chTestsDone(ch)?' · <span class="chok">✓ глава завершена</span>':''}</div><h2>${meta.t}</h2><div class="sub">${ch?ch.s:meta.s}</div></div>${ch?`<button class="easy" data-easy aria-pressed="${!!S.easy}"><span class="sw"><i></i></span>Проще</button>`:''}</header>`;
+ h+=`<header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div class="kick">Глава ${meta.part.n}.${meta.part.ch.indexOf(meta)+1} · ${stepLabel(id)}${ch&&chTestsDone(ch)?' · <span class="chok">✓ глава завершена</span>':''}</div><h2>${meta.t}</h2><div class="sub">${ch?ch.s:meta.s}</div></div>${ch?`<button class="easy" data-easy aria-pressed="${!!S.easy}"><span class="sw"><i></i></span>Проще</button>`:''}</header>`;
+ if(ch)h+=needHTML(id)||opcBtnHTML(id);
  if(!ch){
   h+=`<div class="bins btip"><div class="h">Глава готовится</div><p>В образце готова одна глава — «Н и НН». На ней показано, как будут устроены все остальные: уроки, схема, упражнения, тонкости и карточки.</p><div><button class="linkbtn" data-ch="nn">Открыть «Н и НН» ›</button></div></div>`;
   if(meta.deck) h+=`<div class="bins bkey"><div class="h">Карточки уже есть</div><p>Для этой темы готова колода «${DECKS[meta.deck].t}».</p><div><button class="linkbtn" data-deck="${meta.deck}">Открыть колоду ›</button></div></div>`;
@@ -124,6 +131,7 @@ function chapterHTML(id){
   });
   h+=`</article>`;}
   if(meta.deck&&DECKS[meta.deck])h+=`<div class="bins bkey" style="max-width:72ch"><div class="h">Повторить</div><p>По этой главе есть колода карточек с интервальным повторением.</p><div><button class="linkbtn" data-deck="${meta.deck}">Учить карточки ›</button></div></div>`;
+  h+=stepBtnHTML(id,'stend');
   h+=`<div class="bsrc">По книгам: ${ch.src}</div></div></div>`;
   h+=`<button class="fab" data-navopen aria-haspopup="dialog" aria-label="Навигатор: урок, тренажёр, упражнения, тесты, другая глава" title="Перейти к уроку, тренажёру, упражнениям или тестам">${NAVICO}</button>`;
  }
@@ -288,12 +296,16 @@ function render(){
  else if(route.v==='word') app.innerHTML=wordHTML(route.id);
  else if(route.v==='home') app.innerHTML=homeHTML();
  else if(route.v==='me') app.innerHTML=meHTML();
+ else if(route.v==='step') app.innerHTML=stepHTML(route.n);
+ else if(route.v==='opc') app.innerHTML=opcHTML(route.id);
  else app.innerHTML=tocHTML();
  if(route.v==='ch')statWhere();
  meBind();
  const q=$('#q'); if(q){q.addEventListener('input',search);}
  if(route.v==='ch'&&(S.tab||'theory')==='theory'){enhance(app.querySelector('.bktext'),route.id);linkWords(app.querySelector('.bktext'))}
  else if(route.v==='ch')termsIn(app.querySelector('.chmain')||app);
+ else if(route.v==='opc'){const el=document.getElementById('tests');if(el)termsIn(el)}
+ else if(route.v==='step')['tests','trainer'].forEach(i=>{const el=document.getElementById(i);if(el)termsIn(el)});
  const gq=$('#gq');if(gq)gq.addEventListener('input',e=>{GQ=e.target.value;$('#glist').innerHTML=glossList()});
  const dq=$('#dq');if(dq)dq.addEventListener('input',e=>{DQ=e.target.value;$('#dlist').innerHTML=dictList()});
 }
@@ -382,7 +394,7 @@ document.addEventListener('click',e=>{
  if(d.trl){const l=+d.trl;TR.les=TR.les.includes(l)?TR.les.filter(x=>x!==l):[...TR.les,l].sort();if(!TR.les.length)TR.les=[l];route.l=TR.les.length===1&&TR.les.length<CC().lessons.length?CC().lessons[TR.les[0]-1].id:undefined;syncHash();trRe();return}
  if(d.trm){TR.mode=d.trm;trRe();return}
  if(d.trc){TR.cnt=d.trc==='all'?'all':+d.trc;trRe();return}
- if('trgo' in d){trStart();trRe(true);return}
+ if('trgo' in d){if(route.v==='step')stepTrStart(route.n);else trStart();trRe(true);return}
  if('trerr' in d){const w=TR.run.wrong;trStart(shuffle(w));trRe(true);return}
  if('trsetup' in d){TR.run=null;trRe(true);return}
  if(d.trp){const t=TR.run.tasks[TR.run.i];if(S.easy&&!t.hinted&&d.trp!==t.it.a){t.hinted=true;t.first=d.trp;trScore([[t.it,false]]);trRe();return}t.ans=d.trp;if(!t.hinted)trScore([[t.it,d.trp===t.it.a]]);trRe();return}

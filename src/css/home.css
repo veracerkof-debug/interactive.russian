@@ -169,3 +169,18 @@
 .mewipe .mebox{margin-top:8px}
 .mered{color:var(--red)}
 .mebtns .mered2{background:var(--red);color:#fff}
+
+/* серия «дни подряд» и маскот: токены темы, без своих цветов — тёмная тема подхватывается сама */
+.hmsk{display:flex;gap:14px;align-items:center}
+.hmsk .b{min-width:0;flex:1 1 auto}
+.hmsk .hmh{margin:0 0 2px}
+.hmsk .hmnote{margin:2px 0}
+.hmnote.sm{font-size:12px;color:var(--l3)}
+.mk{flex:0 0 auto;width:72px;height:72px;overflow:visible}
+.mk-ring{fill:color-mix(in srgb,var(--tint) 22%,var(--cell));stroke:color-mix(in srgb,var(--tint) 75%,var(--ink));stroke-width:2}
+.mk-l{fill:none;stroke:var(--ink);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.mk-a{fill:var(--tint-text);font-family:Georgia,"Times New Roman",serif;font-weight:700;text-anchor:middle}
+.mk-happy{animation:mkhop 2.4s ease-in-out 1}
+@keyframes mkhop{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}60%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.mk-happy{animation:none}}
+@media (max-width:380px){.hmsk{gap:10px}.mk{width:60px;height:60px}}

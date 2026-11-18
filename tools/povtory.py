@@ -8,6 +8,11 @@
 в «порог» и более местах, и сами места: Т12 — задание тренажёра № 12 (с единицы), №34 — упражнение,
 т3.5 — тест урока 3, слот 5. С ключом --slovo печатает места одной леммы (с --kont — и обрывок текста вокруг).
 Служебные слова и слова оформления (STOP) не считаются.
+
+Е.4 (18.11.2026): закрытые классы по части речи (предлоги, союзы, частицы, местоимения, числительные, междометия)
+слова-меры (MERY) и термины глоссария (названия `t:` в glossary.js) вне счёта. Ключ --json печатает {"lim":N,"osn":[...],"slova":{лемма:[места]}} — его читает
+tools/check-chapter.js. Потолки: слова окружения — меньше 10 мест (в bsp и spp2 — не больше 14); слова-основы —
+не больше 10; основы главы — строка «Леммы-основы: слово, слово» в docs/plans/<id>.md.
 """
 import sys, re, json, subprocess, pathlib
 import pymorphy3
@@ -36,18 +41,36 @@ STOP = set('''быть весь это этот тот такой который
 когда если чтобы потому или либо тоже также уже ещё еще только даже лишь вот ведь же бы ли не ни да нет но а и в во на с со к ко у о об от до по за из
 под над при для без через между перед про один два три первый второй другой каждый самый очень можно нужно надо мочь стать сказать говорить
 слово предложение текст пояснение набор часть сочетание пример группа ошибка правка оборот фраза вопрос задание вариант объявление запись
+пропуск пропустить вставить вставлять поставить ставить ставиться расставить подчеркнуть выделить выписать определить объяснить указать найти записать
+запятая тире двоеточие знак место буква суффикс приставка окончание корень
 год день время человек раз чем всё после много какой среди есть писатель строка большой'''.split())
 SIG = re.compile(r'\((?:[А-ЯЁ]\. ){1,2}[А-ЯЁ][А-Яа-яё-]+(?:, [^()]*)?\)')
-m = pymorphy3.MorphAnalyzer(); lem = {}
+MERY = set('метр сантиметр миллиметр километр килограмм грамм тонна литр гектар градус процент рубль копейка доллар минута секунда час неделя месяц век'.split())
+CLOSED = {'PREP', 'CONJ', 'PRCL', 'NPRO', 'NUMR', 'INTJ', 'NUMB'}
+m = pymorphy3.MorphAnalyzer(); lem = {}; closed = set()
 def L(w):
-    if w not in lem: lem[w] = m.parse(w)[0].normal_form
+    if w not in lem:
+        p = m.parse(w)[0]; lem[w] = p.normal_form
+        if not m.word_is_known(w): closed.add(p.normal_form)  # обрывки слов (суффиксы, части) — не слова окружения
+        if p.tag.POS in CLOSED: closed.add(p.normal_form)
     return lem[w]
 where = {}
 for tag, txt in places:
     txt = SIG.sub(' ', txt.replace('<br>', ' ')).lower().replace('́', '')
     for l in {L(w) for w in re.findall(r'[а-яё]{3,}', txt)}:
-        if l not in STOP: where.setdefault(l, []).append(tag)
-if slovo:
+        if l not in STOP and l not in MERY: where.setdefault(l, []).append(tag)
+terms = set()
+for t in re.findall(r"\bt:'([^']+)'", (ROOT / 'src/data/glossary.js').read_text(encoding='utf8')):
+    for w in re.findall(r'[а-яё]{3,}', t.lower()): terms.add(L(w))
+for k in closed | terms: where.pop(k, None)
+if '--json' in args:
+    note = ROOT / 'docs/plans' / (cid + '.md'); osn = []
+    if note.exists():
+        for mm in re.finditer(r'Леммы-основы:\s*([^\n]+)', note.read_text(encoding='utf8')):
+            osn += [x.strip().lower() for x in re.split(r'[,;.]', mm.group(1)) if x.strip()]
+    lim = 14 if cid in ('bsp', 'spp2') else 9
+    print(json.dumps({'lim': lim, 'osn': osn, 'slova': {k: v for k, v in where.items() if len(v) >= 10}}, ensure_ascii=False))
+elif slovo:
     print(slovo, len(where.get(slovo, [])), ' '.join(where.get(slovo, [])))
     if '--kont' in args:
         for tag, txt in places:

@@ -159,15 +159,16 @@ function bookTOC(){
   h+=`<section class="tpart" style="--pc:${p.c}"><header><span class="pnum">${p.n}</span><span class="pt">${p.t}</span><span class="pc">${rN?`${rN} из ${p.ch.length} готово`:`${p.ch.length} глав`}</span></header><ol class="tchs">`;
   p.ch.forEach((c,i)=>{
    const ch=CHAPTERS[c.id],num=`${p.n}.${i+1}`;
-   if(!ch){h+=`<li class="tch soon"><button data-ch="${c.id}"><span class="cn">${num}</span><span class="cb"><span class="ct">${c.t}</span><span class="cs">${c.s}</span></span><span class="wait">скоро</span></button></li>`;return}
+   if(!ch){h+=`<li class="tch soon"><button data-ch="${c.id}"><span class="cn">${num}</span><span class="cb"><span class="ct">${c.t}</span><span class="cs">${c.s}</span><span class="cstep">${stepLabel(c.id)}</span></span><span class="wait">скоро</span></button></li>`;return}
    const d=ch.lessons.filter(l=>S.done[l.id]).length,n=ch.lessons.length,fin=chTestsDone(ch),open=tocIsOpen(c.id,contCh);
    h+=`<li class="tch rdy${open?' open':''}"><button class="tchb" data-tchap="${c.id}" aria-expanded="${open}" aria-controls="tp-${c.id}">
-    <span class="cn">${num}</span><span class="cb"><span class="ct">${c.t}</span><span class="cs">${c.s}</span>
+    <span class="cn">${num}</span><span class="cb"><span class="ct">${c.t}</span><span class="cs">${c.s}</span><span class="cstep">${stepLabel(c.id)}</span>
     <span class="cpr">${fin?'<span class="chok">✓ глава завершена</span>':d?`пройдено уроков: ${d} из ${n}`:`${n} ${plural(n,'урок','урока','уроков')}`}</span></span>
     <span class="rg">${ringSVG(d/n,p.c)}<i>${d}/${n}</i></span><span class="chev" aria-hidden="true"></span></button>
    <div class="tpanel" id="tp-${c.id}"${open?'':' hidden'}>
    <ol class="tles" aria-label="Уроки главы «${esc(c.t)}»">${ch.lessons.map((l,k)=>{const sc=secs(l).map(x=>x.t).join(' · ');return `<li><button data-ojump2="${l.id}" class="${S.done[l.id]?'dn':''}"${sc?` title="${esc(sc)}"`:''} aria-label="Урок ${k+1}. ${esc(l.t)}${S.done[l.id]?', пройден':''}"><span class="ln">${k+1}</span><span class="lb"><span class="lt">${l.t}</span>${sc?`<span class="ls">${sc}</span>`:''}</span>${S.done[l.id]?'<span class="ok" aria-hidden="true">✓</span>':'<span class="lgo" aria-hidden="true">›</span>'}</button></li>`}).join('')}</ol>
    <div class="tquick">${chTabs(ch).map(([k,t])=>`<button data-ch="${c.id}" data-tabto="${k}">${MODEI[k]||''}<span>${t}${k==='train'&&ch.bank&&ch.bank.length?`<span class="qn"> · ${ch.bank.length}</span>`:k==='classic'?`<span class="qn"> · ${ch.classic.length}</span>`:''}</span></button>`).join('')}${c.deck?`<button data-deck="${c.deck}">${ico('cards',16)}<span>Карточки</span></button>`:''}</div></div></li>`;
+   const sb=stepBtnHTML(c.id,'sttoc');if(sb)h+=`<li class="tstep">${sb}</li>`;
   });
   h+='</ol></section>';
  });

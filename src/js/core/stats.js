@@ -7,7 +7,7 @@
 //   S.seen  {<id урока>: 1}                — урок открывали
 //   S.at    {ch,tab,l}                     — где ученик остановился (для «Продолжить»)
 //   S.recent [{ch,r,at}]                   — последние 3 открытых задания #ex-<глава>-<номера>
-// Показатель вовлечённости — не оценка (решение 13). Очков, серий и рейтингов нет (docs/plans/home-research.md).
+// Показатель вовлечённости — не оценка (решение 13). Очков и рейтингов нет; «дни подряд» (streakInfo) считаются из S.time, не хранятся и ничего не штрафуют (docs/plans/home-research.md).
 
 // Пороги — предложение, решает владелец.
 const ST={
@@ -36,6 +36,17 @@ function weekDays(off=0){
  const now=new Date(),t=dayKey(now),mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-((now.getDay()+6)%7)-7*off),T=S.time||{};
  return WD.map((wd,i)=>{const d=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i),k=dayKey(d),sec=+T[k]||0;
   return {wd,k,d,sec,on:sec>=ST.DAY_MIN,today:k===t,fut:k>t}});
+}
+// ----- серия «дни подряд» -----
+// Ничего не хранится: серия считается из S.time (дни, где набралось ST.DAY_MIN секунд активного времени по правилу 5 минут).
+// Откат статистики учителем (правка S.time) пересчитывает серию сам. Не оценка, не очки, не рейтинг (решение 13).
+// → {n: дней подряд, today: сегодня засчитан, alive: серия ещё идёт (сегодня или вчера был день занятий), best: лучшая за хранимые дни, st: 'happy'|'nudge'|'calm'}
+function streakInfo(now=new Date()){
+ const T=(S&&S.time)||{},on=d=>(+T[dayKey(d)]||0)>=ST.DAY_MIN,y=now.getFullYear(),m=now.getMonth(),dd=now.getDate();
+ const today=on(now);let n=0,i=today?0:1;
+ while(i<=ST.DAYS&&on(new Date(y,m,dd-i))){n++;i++}
+ let best=0,run=0;for(let k=ST.DAYS;k>=0;k--){if(on(new Date(y,m,dd-k))){run++;if(run>best)best=run}else run=0}
+ return {n,today,alive:n>0,best,st:today?'happy':n>0?'nudge':'calm'};
 }
 const weekTime=(off=0)=>weekDays(off).reduce((s,x)=>s+x.sec,0);
 
@@ -154,7 +165,7 @@ function bkRead(text){
 // привести загруженные данные в порядок: только известные виды значений, ничего лишнего в разметку не попадёт
 function normS(d){
  const n=Object.assign(S_NEW(),d);
- ['done','cards','tests','ans','seen','time','tocOpen'].forEach(k=>{if(!isObj(n[k]))n[k]={}});
+ ['done','cards','tests','ans','seen','time','tocOpen','steps','needx'].forEach(k=>{if(!isObj(n[k]))n[k]={}});
  if(!Array.isArray(n.tlog))n.tlog=[];
  if(!Array.isArray(n.recent))n.recent=[];
  const p=isObj(n.prof)?n.prof:{};n.prof={name:String(p.name||'').slice(0,40),sur:String(p.sur||'').slice(0,40),cls:String(p.cls||'').slice(0,8)};
@@ -165,4 +176,4 @@ function stateReset(){TR.run=null;TR.ch=null;TS=null;TSV='list';CLR=null;CLF=0;T
 function bkApply(d){S=normS(d);timePrune();stateReset();save()}
 function wipeAll(){S=S_NEW();stateReset();try{localStorage.removeItem(KEY)}catch(e){}save()}
 
-if(window.__T)Object.assign(window.__T,{ST,lessonLevel,weakLessons,unfinished,weekDays,weekTime,statAns,bkText,bkRead,getS:()=>S,timeFlush});
+if(window.__T)Object.assign(window.__T,{ST,lessonLevel,weakLessons,unfinished,weekDays,weekTime,streakInfo,statAns,bkText,bkRead,getS:()=>S,timeFlush});

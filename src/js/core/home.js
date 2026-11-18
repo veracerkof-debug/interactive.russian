@@ -40,12 +40,46 @@ function contHTML(){
  <span class="hmwhere">${modeIco(tab,16)}<span>${CONT_TAB[tab]}</span>${v&&v.lv>1?`<span class="hmdot"></span>${stepsHTML(v.lv)}<span>${v.word}</span>`:''}</span>
  <span class="hmcta">${CONT_GO[tab]}${HI.chev}</span></button>`;
 }
+// ---------- серия «дни подряд» и маскот ----------
+// Маскот «Ёшка» — по образцу Мелеты (Melete): лицо из тонких линий в круге, но каждая черта — буква русского языка:
+// брови — «п» (арка), глаза — «о» (кольца) или «п» (закрытые/радостные), нос — мягкий знак «ь», рот — «п», перевёрнутая, или «о»;
+// украшения — «Ё» (искры при радости), «з з» (дремота), «?» (ждёт). Цвет — currentColor и токены темы: светлая и тёмная.
+// Состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
+const MKP=d=>`<path class="mk-l" d="${d}"/>`;
+const MK_BROW=(y,l=0)=>MKP(`M${27+l} ${y+5}v-1.5q0-3.5 3.5-3.5h7q3.5 0 3.5 3.5v1.5`)+MKP(`M${57+l} ${y+5}v-1.5q0-3.5 3.5-3.5h7q3.5 0 3.5 3.5v1.5`);
+const MK_EYE_O=(dx=0)=>`<ellipse class="mk-l" cx="${37+dx}" cy="47" rx="3.6" ry="4.6"/><ellipse class="mk-l" cx="${64+dx}" cy="47" rx="3.6" ry="4.6"/>`;
+const MK_EYE_UP=MKP('M31 50v-1.5q0-4 4.5-4t4.5 4v1.5')+MKP('M58 50v-1.5q0-4 4.5-4t4.5 4v1.5');   // п — радость
+const MK_EYE_DN=MKP('M31 45v1.5q0 4 4.5 4t4.5-4v-1.5')+MKP('M58 45v1.5q0 4 4.5 4t4.5-4v-1.5');   // п вверх ногами — закрыты
+const MK_NOSE=MKP('M47 52v14M47 59h4q5 0 5 3.5t-5 3.5h-4');                                       // ь
+const MK_MOUTH_BIG=MKP('M37 74v2q0 8 13 8t13-8v-2');
+const MK_MOUTH_SM=MKP('M42 78v1q0 4 8 4t8-4v-1');
+const MK_MOUTH_O='<ellipse class="mk-l" cx="50" cy="79" rx="3.4" ry="4.4"/>';
+function mascotHTML(st){
+ const T=(x,y,ch,sz)=>`<text class="mk-a" x="${x}" y="${y}" font-size="${sz}">${ch}</text>`;
+ const f=st==='happy'?MK_BROW(29)+MK_EYE_UP+MK_NOSE+MK_MOUTH_BIG+T(82,26,'Ё',16)+T(17,32,'ё',10)
+  :st==='nudge'?MK_BROW(33)+MK_EYE_O(4)+MK_NOSE+MK_MOUTH_O+T(80,28,'?',20)
+  :MK_BROW(34)+MK_EYE_DN+MK_NOSE+MK_MOUTH_SM+T(76,30,'з',15)+T(86,20,'з',10);
+ return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="76" height="76" role="img" aria-label="${st==='happy'?'Ёшка радуется':st==='nudge'?'Ёшка ждёт':'Ёшка спокоен'}">
+ <circle class="mk-ring" cx="50" cy="50" r="46"/>${f}</svg>`;
+}
+const dayWord=n=>plural(n,'день','дня','дней');
+function streakHTML(me){
+ const k=streakInfo();
+ const head=k.today?`${k.n} ${dayWord(k.n)} подряд`:k.alive?`${k.n} ${dayWord(k.n)} подряд`:'Дни занятий подряд';
+ const msg=k.st==='happy'?(k.n>1?'Сегодня день засчитан. Так держать — без спешки.':'Сегодня день засчитан. Хорошее начало.')
+  :k.st==='nudge'?'Сегодня ещё не занимались. Несколько минут — и день засчитается; не получится — ничего страшного.'
+  :'Серия начнётся с первого дня занятий. Пропуски не страшны: счёт можно начать заново в любой день.';
+ return `<section class="hmsec hmbox hmstreak${me?' me':''}" aria-label="Дни занятий подряд"><div class="hmsk">${mascotHTML(k.st)}
+ <div class="b"><h2 class="hmh">${head}</h2><p class="hmnote">${msg}</p>
+ ${me&&k.best>1?`<p class="hmnote">Больше всего подряд за последние месяцы: ${k.best} ${dayWord(k.best)}.</p>`:''}
+ <p class="hmnote sm">День засчитывается, когда набралась минута активных занятий. Это не оценка.</p></div></div></section>`;
+}
 function homeHTML(){
  const ready=ALLCH.filter(m=>CHAPTERS[m.id]),nles=ready.reduce((s,m)=>s+CHAPTERS[m.id].lessons.length,0);
  const hasName=!!((S.prof||{}).name||'').trim(),dl=dateLine();
  let h=`<div class="wrap hm"><header class="hmtop"><div class="hmhi"><h1>${greet()}</h1><div class="sub">${dl}${hasName?'':`${dl?'<span class="hmdot"></span>':''}<button class="linkbtn" data-hgo="me" data-hname>Указать имя</button>`}</div></div>
  <button class="hmava" data-hgo="me" aria-label="Мои результаты и профиль" title="Мои результаты">${avaHTML('ava')}</button></header>
- <div class="hmgrid"><div class="hmcol">${contHTML()}
+ <div class="hmgrid"><div class="hmcol">${contHTML()}${nextHTML()}
  <section class="hmbook" aria-label="Учебник">
   <button class="hmbig" data-hgo="toc">${ico('book',26)}<span class="b"><b>Учебник</b><small>Содержание: ${ready.length} ${plural(ready.length,'глава','главы','глав')}, ${nles} ${plural(nles,'урок','урока','уроков')}</small></span>${HI.chev}</button>
   <input class="bsearch" id="q" type="search" placeholder="Найти тему, урок, термин или слово" autocomplete="off" aria-label="Поиск по учебнику">
@@ -70,6 +104,8 @@ function homeHTML(){
  const unf=unfinished(3);
  if(unf.length)h+=`<section class="hmsec"><h2 class="hmh">Не доведено до конца</h2><div class="hmlist">${unf.map(u=>{const m=chById(u.c.id);
   return `<button class="hmrow" data-hun="${u.c.id}"><span class="b"><b>${m.t}</b><small>осталось: ${leftText(u.left)}</small></span><span class="hmact">К тестам</span></button>`}).join('')}</div></section>`;
+ // дни подряд
+ h+=streakHTML(false);
  // моя неделя
  const wk=weekDays(0),wt=wk.reduce((s,x)=>s+x.sec,0);
  h+=`<section class="hmsec hmbox hmweek"><h2 class="hmh">Моя неделя</h2>
@@ -157,7 +193,7 @@ function meDataHTML(){
 function meHTML(){
  return `<div class="bkhbar"><div class="in"><button class="back" data-hgo="home">‹ Главная</button><span class="tools"><button class="ibtn" data-hgo="toc">${ico('book',18)}Учебник</button></span></div></div>
  <div class="wrap me"><header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><h2>Мои результаты</h2><div class="sub">Что уже получается и к чему стоит вернуться.</div></div></header>
- <div class="megrid"><div class="mecol">${meProfHTML()}${meTopicsHTML()}</div><div class="mecol">${meTimeHTML()}${meNoteHTML()}${meDataHTML()}</div></div></div>`;
+ <div class="megrid"><div class="mecol">${meProfHTML()}${meTopicsHTML()}</div><div class="mecol">${streakHTML(true)}${meTimeHTML()}${meNoteHTML()}${meDataHTML()}</div></div></div>`;
 }
 function meRe(focus){const y=window.scrollY;render();window.scrollTo(0,y);if(focus){const el=document.querySelector(focus);if(el){el.focus({preventScroll:true});el.scrollIntoView({block:'nearest'})}}}
 function meBind(){

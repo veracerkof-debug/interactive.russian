@@ -14,7 +14,7 @@ const SEED=()=>{const C=window.__T.CHAPTERS,day=Math.floor(Date.now()/864e5),p=n
  const b=await chromium.launch();let bad=0,P=null;const errs=[];
  for(const W of [360,768,1280]){
   const p=await b.newPage({viewport:{width:W,height:900}});P=p;p.on('pageerror',e=>errs.push(W+' '+e.message));
-  const routes=['home','me','toc','glossary','dict','cards','deck-nn','deck-udar'];
+  const routes=['home','me','toc','opc-glag','step-1','step-11','step-14','glossary','dict','cards','deck-nn','deck-udar'];
   for(const ch of ['nn','prichastie'])for(const tab of ['theory','train','classic'])routes.push('ch-'+ch+'|'+tab);
   // главы — если они в сборке (черновики DRAFT из tools/build.py в неё не входят)
   for(const ch of ['zvuki','slog','udar','deeprich'])for(const tab of ['theory','train','classic','tests'])routes.push('?'+ch+'|'+tab);

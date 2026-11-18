@@ -9,7 +9,7 @@
 """
 import os, re, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CSS = ['src/css/base.css', 'src/css/nav.css', 'src/css/dictionary.css', 'src/css/home.css', 'src/css/wide.css', 'src/css/end.css']
+CSS = ['src/css/base.css', 'src/css/nav.css', 'src/css/dictionary.css', 'src/css/home.css', 'src/css/wide.css', 'src/css/steps.css', 'src/css/end.css']
 JS = [
     'src/js/core/store.js',            # хранилище, PARTS (оглавление курса)
     'src/data/corpus/levels.js',        # общий корпус: порядок изучения тем, уровни доступа, разборы
@@ -339,6 +339,7 @@ JS = [
     'src/js/core/dictionary.js',        # карточка слова
     'src/js/core/stats.js',             # статистика на устройстве: ступени уроков, слабые места, время, копия данных
     'src/js/core/home.js',              # главная (#home) и кабинет «Мои результаты» (#me)
+    'src/js/core/steps.js',             # маршрут: ступени, «Следующая по маршруту», плашка опор, «Повторение ступени»
     'src/js/core/screens.js',           # экраны, маршруты, обработчики
 ]
 # главы, которые ещё проходят проверки (PRINCIPLES §8, §9.3): в сборку не входят, пока не пройдут проверку и исправление;

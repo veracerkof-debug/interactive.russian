@@ -45,7 +45,7 @@ function homeHTML(){
  const hasName=!!((S.prof||{}).name||'').trim(),dl=dateLine();
  let h=`<div class="wrap hm"><header class="hmtop"><div class="hmhi"><h1>${greet()}</h1><div class="sub">${dl}${hasName?'':`${dl?'<span class="hmdot"></span>':''}<button class="linkbtn" data-hgo="me" data-hname>Указать имя</button>`}</div></div>
  <button class="hmava" data-hgo="me" aria-label="Мои результаты и профиль" title="Мои результаты">${avaHTML('ava')}</button></header>
- <div class="hmgrid"><div class="hmcol">${contHTML()}
+ <div class="hmgrid"><div class="hmcol">${contHTML()}${nextHTML()}
  <section class="hmbook" aria-label="Учебник">
   <button class="hmbig" data-hgo="toc">${ico('book',26)}<span class="b"><b>Учебник</b><small>Содержание: ${ready.length} ${plural(ready.length,'глава','главы','глав')}, ${nles} ${plural(nles,'урок','урока','уроков')}</small></span>${HI.chev}</button>
   <input class="bsearch" id="q" type="search" placeholder="Найти тему, урок, термин или слово" autocomplete="off" aria-label="Поиск по учебнику">

@@ -212,6 +212,75 @@ const ok=[],fail=[];const check=(c,msg)=>(c?ok:fail).push(msg);
   await q.goto(U+'#me');await q.setInputFiles('#bkfile',{name:'copy.json',mimeType:'application/json',buffer:Buffer.from(copy)});await q.waitForSelector('#bkpv');await q.click('[data-bk="apply"]');
   check((await LS()).prof.sur==='Каримов','копия загружается из файла');
   await ctx.close();}
+ // ---------- маршрут: метки ступеней, «Следующая по маршруту», плашка опор, «Повторение ступени» ----------
+ {const ctx=await b.newContext({viewport:{width:400,height:900}});const q=await ctx.newPage();q.on('pageerror',e=>errs.push('маршрут: '+e.message));q.on('dialog',d=>d.accept());
+  const LS=()=>q.evaluate(()=>JSON.parse(localStorage.getItem('rus-uchebnik-v1')||'{}'));const hash=()=>q.evaluate(()=>location.hash);
+  await q.goto(U+'?selftest#toc');
+  check(await q.evaluate(()=>window.__T.stepsCheck())==='','ступени (STEPS) совпадают с порядком глав COURSE_ORDER');
+  const nst=await q.evaluate(()=>window.__T.STEPS.length);
+  // Г.2 (1): метка ступени у каждой главы в содержании
+  const lab=await q.evaluate(()=>[...document.querySelectorAll('.tch')].map(x=>(x.querySelector('.cstep')||{}).textContent||''));
+  check(lab.length>=40&&lab.every(t=>/^Ступень \d+ · \S/.test(t)),`содержание: у каждой из ${lab.length} глав метка ступени`);
+  check(lab[0]==='Ступень 1 · Звуки'&&lab.includes('Ступень 14 · Нормы речи'),'метки: «Ступень 1 · Звуки» … «Ступень 14 · Нормы речи»');
+  const nb=await q.evaluate(()=>document.querySelectorAll('.tstep [data-stepgo]').length);
+  check(nb===nst,`содержание: кнопка «Повторить ступень» после каждой из ${nst} ступеней (${nb})`);
+  // Г.2 (2): «Следующая по маршруту»
+  await q.evaluate(()=>localStorage.clear());await q.goto(U+'#home');await q.reload();
+  const nx=await q.innerText('.hmnext');
+  check(!!await q.$('.hmnext [data-hnext]')&&nx.includes('Ступень 1 · Звуки')&&nx.includes('Слог и перенос'),'главная: «Следующая по маршруту» — вторая глава (первая — «С чего начать»)');
+  await q.click('[data-hnext]');await q.waitForTimeout(150);check((await hash()).startsWith('#ch-slog'),'«Следующая по маршруту» открывает главу');
+  await q.goto(U+'?selftest#home');
+  await q.evaluate(()=>{const T=window.__T,S=T.getS();['zvuki','slog'].forEach(id=>T.CHAPTERS[id].lessons.forEach(l=>S.done[l.id]=true));S.last=T.CHAPTERS.slog.lessons[0].id;localStorage.setItem('rus-uchebnik-v1',JSON.stringify(S))});
+  await q.reload();
+  const nx2=await q.innerText('.hmnext');check(nx2.includes('Ударение')&&!nx2.includes('Слог и перенос'),'пройденные главы пропускаются: следующая — «Ударение»');
+  // Г.2 (3): плашка опор
+  await q.evaluate(()=>localStorage.clear());await q.goto(U+'#ch-slog');await q.reload();
+  check(await q.evaluate(()=>{const e=document.querySelector('.needbox');return !!e&&e.innerText.includes('нужна тема «Звуки и буквы»')&&!!e.querySelector('[data-needgo="zvuki"]')}),'плашка: «Здесь нужна тема «Звуки и буквы» — повторить» со ссылкой');
+  await q.click('.needbox [data-needgo="zvuki"]');await q.waitForTimeout(100);check((await hash()).startsWith('#ch-zvuki'),'ссылка плашки ведёт на главу-опору');
+  await q.goto(U+'#ch-slog');await q.click('.needx');check(!await q.$('.needbox')&&(await LS()).needx.slog===1,'плашка закрывается, выбор запоминается (S.needx)');
+  await q.reload();check(!await q.$('.needbox'),'закрытая плашка не возвращается');
+  await q.evaluate(()=>localStorage.clear());await q.goto(U+'?selftest#ch-slog');
+  await q.evaluate(()=>{const T=window.__T,S=T.getS();T.CHAPTERS.zvuki.lessons.forEach(l=>S.done[l.id]=true);localStorage.setItem('rus-uchebnik-v1',JSON.stringify(S))});
+  await q.reload();check(!await q.$('.needbox'),'опора пройдена — плашки нет');
+  await q.evaluate(()=>localStorage.clear());await q.goto(U+'#ch-glag');await q.reload();
+  check(await q.evaluate(()=>{const e=document.querySelector('.needbox');return !!e&&e.innerText.includes('Здесь нужны темы')}),'несколько опор: «Здесь нужны темы …»');
+  check(await q.evaluate(()=>!!document.querySelector('.chmain [data-tab="train"]')),'плашка не блокирует главу (вкладки на месте)');
+  // Г.3: страница ступени
+  await q.evaluate(()=>localStorage.clear());
+  await q.goto(U+'#ch-proizn');await q.reload();
+  check(await q.evaluate(()=>!!document.querySelector('.stend[data-stepgo="1"]')),'последняя глава ступени: кнопка «Повторить ступень»');
+  await q.click('.stend');await q.waitForTimeout(100);
+  check((await hash())==='#step-1'&&!!await q.$('#tests')&&!!await q.$('#trainer')&&(await q.innerText('.stepw')).includes('Звуки'),'страница #step-1: главы, тест и тренажёр ступени');
+  await q.click('[data-stgo]');let qn=0;
+  for(let k=0;k<30;k++){
+   if(!(await q.$('.tscard')))break;qn++;
+   const kind=await q.evaluate(()=>document.querySelector('.tscard .ty').innerText);
+   if(/вписать/i.test(kind))await q.fill('[data-tsform] input','а');
+   else if(/разложить/i.test(kind)){const n=(await q.$$('.tssr')).length;for(let i=0;i<n;i++)await q.click(`[data-tss="${i}"]`)}
+   else await q.click('[data-tsa="0"]');
+   await q.click('[data-tsnext]');
+  }
+  check(!!(await q.$('.tsgrade'))&&qn===15,`итоговый тест ступени: ${qn} вопросов, оценка`);
+  let st=await LS();check(st.steps&&st.steps['1']&&st.steps['1'].tries===1&&st.steps['1'].best>=2&&st.tlog.some(x=>x.t==='step:1'),'результат теста ступени сохраняется (S.steps)');
+  check(!st.tests||!Object.keys(st.tests).some(k=>/step/.test(k)),'тесты глав не затронуты тестом ступени');
+  await q.click('[data-tslist]');check(!!await q.$('[data-stgo]')&&(await q.innerText('#tests')).includes('лучшая оценка'),'«К списку тестов» — ступень, лучшая оценка');
+  // смешанный тренажёр ступени
+  await q.goto(U+'#step-1');await q.reload();
+  await q.click('[data-stc="10"]');await q.click('[data-sttr="1"]');let tn=0;
+  for(let k=0;k<12;k++){
+   if(await q.$('#trainer [data-trp]:not([disabled])'))await q.click('#trainer [data-trp]:not([disabled])');
+   if(await q.$('#trainer [data-trnext]')){await q.click('#trainer [data-trnext]');tn++}else break}
+  check(tn===10&&/серия закончена/i.test(await q.innerText('#trainer')),`смешанный тренажёр ступени: ${tn} заданий, итог серии`);
+  st=await LS();const ids=Object.keys(st.ans||{});
+  check(ids.length>=2,`ответы тренажёра ступени идут в статистику уроков (${ids.length} уроков)`);
+  await q.click('#trainer [data-trgo]');check(!!await q.$('#trainer .card'),'«Новая серия» запускает ещё одну');
+  await q.click('[data-trsetup]');check(!!await q.$('#trainer [data-sttr]'),'«Настройки» — снова выбор числа заданий');
+  await q.click('.bpn [data-stepgo="2"]');check((await hash())==='#step-2','переход к следующей ступени');
+  await q.goto(U+'#step-99');check(!!await q.$('.tparts'),'несуществующая ступень — содержание');
+  await q.goto(U+'#step-1');await q.click('[data-stchap="zvuki"]');await q.waitForTimeout(100);check((await hash()).startsWith('#ch-zvuki'),'из ступени — в главу');
+  await q.evaluate(()=>localStorage.setItem('rus-uchebnik-v1',JSON.stringify({done:{pr1:true},cards:{},view:'book'})));
+  await q.goto(U+'#toc');await q.reload();check(!!await q.$('.tstep')&&!!await q.$('.tparts'),'старое сохранение без S.steps и S.needx открывается');
+  await ctx.close();}
  errs.forEach(e=>fail.push('JS: '+e));
  ok.forEach(m=>console.log('  ✓ '+m));fail.forEach(m=>console.log('  ✗ '+m));
  console.log(fail.length?`Ошибок: ${fail.length}`:`Всё работает (${ok.length} проверок)`);

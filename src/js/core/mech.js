@@ -203,7 +203,7 @@ const MECH={
    why:bad.length?`Ошибок: ${bad.length} из ${t.gaps.length}.`:''}}},
  // ── Текст с пропусками: связный отрывок классики из общего корпуса (CORPUS_T), все орфограммы уроков
  tx:{t:'Текст с пропусками',l:[],d:'Прочитать отрывок писателя и вставить пропущенное во все слова.',
-  gen(c,les){const P=txPool(c,les),key=T=>T.a+'|'+T.w;let fresh=P.filter(T=>!TX_USED.has(key(T)));if(!fresh.length){TX_USED.clear();fresh=P}
+  gen(c,les){const P=txPool(c,les),key=T=>T.a+'|'+T.w+'|'+T.ss[0].map(x=>x.t).join(' ');let fresh=P.filter(T=>!TX_USED.has(key(T)));if(!fresh.length){TX_USED.clear();fresh=P}
    const T=pick1(fresh),gaps=[];TX_USED.add(key(T));
    T.ss.forEach((u,si)=>u.forEach((x,ui)=>{if(txGap(c,x,les))gaps.push({si,ui,g:x.or.g,a:x.or.a,o:orthOpts(x.or),r:x.or.r[0]})}));
    return mFinal({k:'m',m:'tx',l:Math.max(...gaps.map(g=>ORTHO_R[g.r].l)),q:'Прочитать отрывок. Вставить пропущенные буквы во все слова.',src:`${T.a}, «${T.w}»`,gl:T.g||'',ss:T.ss.map(u=>u.map(x=>({t:x.t,pu:x.pu}))),gaps,sel:{}})},
@@ -231,7 +231,7 @@ function orthPool(c,les){const out=[];corpusSents(c.id,{has:u=>u.some(x=>x.or)})
 // ловушки «почему?»: сначала правила уже пройденных уроков темы, затем остальные
 function orthTraps(topic,valid,l,n=3){const ks=Object.keys(ORTHO_R).filter(k=>ORTHO_R[k].topic===topic&&!valid.includes(k));
  const a=shuffle(ks.filter(k=>ORTHO_R[k].l<=l)),b=shuffle(ks.filter(k=>ORTHO_R[k].l>l));return [...a,...b].slice(0,n)}
-const orthOpts=o=>o.a==='н'||o.a==='нн'?['н','нн']:[o.a];
+const orthOpts=o=>{const R=ORTHO_R[o.r[0]];return R&&R.tw&&R.tw[o.a]?R.tw[o.a]:o.a==='н'||o.a==='нн'?['н','нн']:[o.a]};
 // слово единицы с пропуском на месте орфограммы
 function gapWord(text,g,a,v,res,after=''){const ws=text.split(' '),full=g.replace('_',a).toLowerCase(),wi=ws.findIndex(w=>w.toLowerCase()===full);if(wi<0)return esc(text)+after;
  const w=ws[wi],p=g.indexOf('_'),cl=res?(v===a?'ok':'bad'):'';ws[wi]=`<span class="gtw">${esc(w.slice(0,p))}<span class="slot ${cl}">${v==null?'…':esc(v)}</span>${esc(w.slice(p+a.length))}${after}</span>`;

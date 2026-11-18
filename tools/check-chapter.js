@@ -91,7 +91,7 @@ X.forEach(e=>{if(!e||!e.body)return;const n=`упражнение №${e.n}`;
   const ks=String(e.key||'').replace(/<br\s*\/?>/g,' ').split(SPL).map(CL).filter(Boolean);
   const mine=[];
   bs.forEach((b,i)=>{const bt=b.split(/\s+/);if(bt.length<4)return;
-   const gaps=[];bt.forEach((t,j)=>{if(/\.\.|…|_/.test(t))gaps.push(j)});
+   const gaps=[];const mnog=/многоточ/i.test(String(e.task||''));bt.forEach((t,j)=>{if(t.includes('>'))return;if(!mnog&&j===bt.length-1&&/[а-яё]…$/i.test(t))return;if(/\.\.|…|_/.test(t))gaps.push(j)});
    if(gaps.length){gaps.forEach(j=>mine.push(j/(bt.length-1)));return}
    const k=ks[i];if(!k||ks.length!==bs.length)return;const kt=k.split(/\s+/);
    const clean=t=>t.replace(/[,;:—–!?.«»"()]/g,'').toLowerCase();

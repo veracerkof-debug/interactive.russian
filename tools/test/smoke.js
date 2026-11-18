@@ -296,6 +296,35 @@ const ok=[],fail=[];const check=(c,msg)=>(c?ok:fail).push(msg);
   await q.click('.bpn [data-stepgo="2"]');check((await hash())==='#step-2','переход к следующей ступени');
   await q.goto(U+'#step-99');check(!!await q.$('.tparts'),'несуществующая ступень — содержание');
   await q.goto(U+'#step-1');await q.click('[data-stchap="zvuki"]');await q.waitForTimeout(100);check((await hash()).startsWith('#ch-zvuki'),'из ступени — в главу');
+  // Г.4: «Проверить опоры» — входной мини-тест главы
+  await q.evaluate(()=>localStorage.clear());await q.goto(U+'#ch-glag');await q.reload();
+  check(await q.evaluate(()=>!!document.querySelector('.needbox [data-opcpage="glag"]')),'«Проверить опоры» в плашке опор');
+  await q.evaluate(()=>localStorage.clear());await q.goto(U+'#ch-zvuki');await q.reload();
+  check(!await q.$('[data-opcpage]'),'у главы без опор кнопки нет');
+  await q.goto(U+'#ch-slog');await q.click('.needx');await q.reload();
+  check(!!await q.$('.opcbtn[data-opcpage="slog"]'),'плашка закрыта — кнопка «Проверить опоры» остаётся');
+  await q.goto(U+'#ch-glag');await q.reload();await q.click('.needbox [data-opcpage="glag"]');await q.waitForTimeout(100);
+  check((await hash())==='#opc-glag'&&!!await q.$('#tests [data-opcgo]')&&!!await q.$('.stepw .stch'),'страница #opc-glag: опоры и кнопка «Начать»');
+  await q.click('[data-opcgo]');let on=0;
+  for(let k=0;k<12;k++){
+   if(!(await q.$('.tscard')))break;on++;
+   const kind=await q.evaluate(()=>document.querySelector('.tscard .ty').innerText);
+   if(/вписать/i.test(kind))await q.fill('[data-tsform] input','я');
+   else if(/разложить/i.test(kind)){const n=(await q.$$('.tssr')).length;for(let i=0;i<n;i++)await q.click(`[data-tss="${i}"]`)}
+   else await q.click('[data-tsa="0"]');
+   await q.click('[data-tsnext]');
+  }
+  check(!!(await q.$('.tsgrade'))&&on>=5&&on<=8,`мини-тест опор: ${on} вопросов (5–8), оценка`);
+  check(await q.evaluate(()=>[...document.querySelectorAll('.tsm [data-ojump]')].every(b=>/^Повторить «.+», урок \d+/.test(b.innerText))),'разбор: «Повторить «глава», урок N»');
+  let sp=await LS();check(sp.opc&&sp.opc.glag&&sp.opc.glag.tries===1&&Array.isArray(sp.opc.glag.weak)&&sp.tlog.some(x=>x.t==='opc:glag'),'результат сохраняется (S.opc)');
+  check(!sp.tests||!Object.keys(sp.tests).some(k=>/opc/.test(k)),'тесты глав и ступеней не затронуты');
+  await q.click('[data-tslist]');
+  check(await q.evaluate(()=>{const t=document.getElementById('tests').innerText;return /прошлая оценка/.test(t)&&(/Повтори/.test(t)||/Опоры в порядке/.test(t))}),'после теста: оценка и список «Повтори» (или «Опоры в порядке»)');
+  await q.reload();check((await hash())==='#opc-glag'&&!!await q.$('.stepw'),'#opc-<глава> открывается по адресу');
+  await q.goto(U+'#opc-zvuki');check(!!await q.$('.tparts'),'#opc- у главы без опор — содержание');
+  await q.goto(U+'#opc-glag');await q.click('[data-opcgochap]');await q.waitForTimeout(100);check((await hash()).startsWith('#ch-glag'),'«Начать главу» открывает саму главу');
+  await q.evaluate(()=>localStorage.setItem('rus-uchebnik-v1',JSON.stringify({done:{pr1:true},cards:{},view:'book',steps:{},needx:{}})));
+  await q.goto(U+'#opc-glag');await q.reload();check(!!await q.$('#tests [data-opcgo]'),'старое сохранение без S.opc открывается');
   await q.evaluate(()=>localStorage.setItem('rus-uchebnik-v1',JSON.stringify({done:{pr1:true},cards:{},view:'book'})));
   await q.goto(U+'#toc');await q.reload();check(!!await q.$('.tstep')&&!!await q.$('.tparts'),'старое сохранение без S.steps и S.needx открывается');
   await ctx.close();}

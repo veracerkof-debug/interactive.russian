@@ -882,11 +882,9 @@ h4[id],.bkles{scroll-margin-top:72px}
 .mk{flex:0 0 auto;width:72px;height:72px;overflow:visible}
 .mk-sh{fill:var(--fill2)}
 .mk-body,.mk-ear{fill:color-mix(in srgb,var(--tint) 55%,var(--cell));stroke:color-mix(in srgb,var(--tint) 75%,var(--ink));stroke-width:2;stroke-linejoin:round}
-.mk-belly{fill:color-mix(in srgb,var(--tint) 18%,var(--cell))}
 .mk-ch{fill:color-mix(in srgb,var(--red) 35%,var(--cell));opacity:.7}
 .mk-i{fill:var(--ink)}.mk-s{fill:var(--cell)}
 .mk-e,.mk-m{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
-.mk-beak{fill:var(--tint);stroke:var(--tint-text);stroke-width:1;stroke-linejoin:round}
 .mk-sp{fill:var(--tint)}
 .mk-w{stroke:var(--tint-text);stroke-width:2.6;stroke-linecap:round}.mk-b{stroke:none}
 .mk-happy{animation:mkhop 2.4s ease-in-out 1}
@@ -999,6 +997,13 @@ h4[id],.bkles{scroll-margin-top:72px}
 .stch .cs{font-size:12.5px;color:var(--l2)}
 .stch .lgo{color:var(--l2);font-size:20px}
 .stepw .tsrow>.tsinfo{min-width:0;flex:1}
+.opcbtn{margin:0 0 12px;max-width:72ch}
+.needbox .opcgo{font-weight:600}
+.opcsum{border-radius:14px;padding:10px 14px;background:color-mix(in srgb,var(--tint) 9%,var(--cell));border:1px solid var(--sep);font-size:14.5px;line-height:1.4;min-width:0}
+.opcsum b{display:block;margin-bottom:4px}
+.opcsum ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.opcsum li{min-width:0;overflow-wrap:anywhere}
+.opcsum.ok span{color:var(--l2)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -1308,6 +1313,77 @@ const CORPUS_T=[
   '#одн Свет{П;ч:сущ} от_них{О;ч:предл,мест} освещал{С;ч:гл} только{ч:част} иконостас{Д;ч:сущ} и{ч:союз} слегка{Б;ч:нар} середину{Д;ч:сущ} церкви{О;ч:сущ} .',
   'Отдалённые{О;ч:прил;ор:отдалё_ые:нн:nn_pref|nn_sov} углы{П;ч:сущ} притвора{О;ч:сущ} были{С;ч:гл} закутаны{С;п:сп;к;ч:прич;ор:закута_ы:н:nn_kr} мраком{Д;ч:сущ} .'
  ]},
+ // — Е.1 (18.11.2026): ещё отрывки для «Н и НН» (орфограммы nn_…) и «Причастия» (орфограммы pr_…); каждый отрывок — 3 предложения подряд, как у автора; члены предложения в этих текстах служебные (механика «Текст с пропусками» их не использует)
+ {a:'А. С. Пушкин',w:'История Пугачёва',g:'мятежники — участники мятежа, восстания против власти; учредилась — была создана',s:[
+  '#сл За_ушедшими{Д;ч:предл,прич} послана{С;к;п:сп;ч:прич;ор:посла_а:н:nn_kr} погоня{П;ч:сущ} ,{сл} и{ч:союз} почти{ч:част} все{П;ч:мест} были{С;ч:гл} переловлены{С;к;п:сп;ч:прич;ор:переловле_ы:н:nn_kr} .',
+  'В_Оренбурге{Б;ч:предл,сущ} учредилась{С;ч:гл} следственная{О;ч:прил;ор:следстве_ая:нн:nn_enn} комиссия{П;ч:сущ} под_председательством{Б;ч:предл,сущ} полковника{О;ч:сущ} Неронова{О;ч:сущ} .',
+  'Множество{П;ч:сущ} мятежников{О;ч:сущ} было{С;ч:гл} туда{Б;ч:нар} отправлено{С;к;п:сп;ч:прич;ор:отправле_о:н:nn_kr} .'
+ ]},
+ {a:'В. Г. Короленко',w:'Дети подземелья',g:'аллейка — небольшая аллея; отуманенным — затуманенным, неясным',s:[
+  '#сл,одн Но{ч:союз} ,{сл} когда{ч:союз} воображение{П;ч:сущ} рисовало{С;ч:гл} мне{Д;ч:мест} оживлённое{О;п:сп;ч:прич;ор:оживлё_ое:нн:nn_pref|nn_sov} личико{Д;ч:сущ} моей{О;ч:мест} приятельницы{О;ч:сущ} ,{об} облизывавшей{О;о;п:дп;ч:прич} свои{О;о;ч:мест} засаленные{О;о;п:сп;ч:прич;ор:засале_ые:нн:nn_pref|nn_sov} пальцы{Д;о;ч:сущ} ,{сл} я{П;ч:мест} радовался{С;ч:гл} её{О;ч:мест} радостью{Д;ч:сущ} и{ч:союз} радостью{Д;ч:сущ} Валека{О;ч:сущ} .',
+  'В_тёмной{О;ч:предл,прил} аллейке{Б;ч:сущ} сада{О;ч:сущ} я{П;ч:мест} нечаянно{Б;ч:нар;ор:нечая_о:нн:nn_isk2|nn_nar} наткнулся{С;ч:гл} на_отца{Д;ч:предл,сущ} .',
+  '#одн Он{П;ч:мест} ,{ввод} по_обыкновению{Б;ч:предл,сущ} ,{ввод} угрюмо{Б;ч:нар} ходил{С;ч:гл} взад{Б;ч:нар} и{ч:союз} вперёд{Б;ч:нар} с_обычным{О;ч:предл,прил} странным{О;ч:прил} ,{сравн} как_будто{ч:союз,союз} отуманенным{О;п:сп;ч:прич;ор:отумане_ым:нн:nn_pref|nn_sov} взглядом{Б;ч:сущ} .'
+ ]},
+ {a:'Н. В. Гоголь',w:'Портрет',g:'драпирован — одет в ткань, лежащую красивыми складками; запечатлён — изображён',s:[
+  'Пламенный{О;ч:прил} полдень{П;ч:сущ} был{С;ч:гл} запечатлён{С;к;п:сп;ч:прич;ор:запечатлё_:н:nn_kr} в_них{Б;ч:предл,мест} .',
+  'Он{П;ч:мест} был{С;ч:гл} драпирован{С;к;п:сп;ч:прич;ор:драпирова_:н:nn_kr} в_широкий{О;ч:предл,прил} азиатский{О;ч:прил} костюм{Б;ч:сущ} .',
+  '#сл,одн Как{ч:союз} ни_был{С;ч:част,гл} повреждён{С;к;п:сп;ч:прич;ор:повреждё_:н:nn_kr} и{ч:союз} запылён{С;к;п:сп;ч:прич;ор:запылё_:н:nn_kr} портрет{П;ч:сущ} ,{сл} но{ч:союз} когда{ч:союз} удалось{С;ч:гл} ему{Д;ч:мест} счистить{С;ч:гл} с_лица{Б;ч:предл,сущ} пыль{Д;ч:сущ} ,{сл} он{П;ч:мест} увидел{С;ч:гл} следы{Д;ч:сущ} работы{О;ч:сущ} высокого{О;ч:прил} художника{О;ч:сущ} .'
+ ]},
+ {a:'С. Т. Аксаков',w:'Детские годы Багрова-внука',g:'растворённые — открытые; плодовитые — приносящие много плодов; прогулятися — прогуляться (старая форма); зелены — зелёные (краткая форма, как в сказках); диковинные — удивительные, невиданные',s:[
+  '#сл,одн Вот{ч:част} видит{С;ч:гл} он{П;ч:мест} в_окна{Б;ч:предл,сущ} растворённые{О;п:сп;ч:прич;ор:растворё_ые:нн:nn_pref|nn_sov} ,{сл} что{ч:союз} кругом{Б;ч:нар} его{О;ч:мест} дворца{О;ч:сущ} разведены{С;к;п:сп;ч:прич;ор:разведе_ы:н:nn_kr} сады{П;ч:сущ} диковинные{О;ч:прил} ,{одн} плодовитые{О;ч:прил} и{ч:союз} цветы{П;ч:сущ} цветут{С;ч:гл} красоты{О;ч:сущ} невиданной{О;ч:прил;ор:невида_ой:нн:nn_isk2} ,{одн} неописанной{О;ч:прил;ор:неописа_ой:нн:nn_pref|nn_sov} .',
+  'Захотелось{С;ч:гл} ему{Д;ч:мест} по_тем{О;ч:предл,мест} садам{Б;ч:сущ} прогулятися{С;ч:гл} .',
+  '#одн Сходит{С;ч:гл} он{П;ч:мест} по_другой{О;ч:предл,мест} лестнице{Б;ч:сущ} из_мрамора{Б;ч:предл,сущ} зелёного{О;ч:прил} ,{одн} из_малахита{Б;ч:предл,сущ} медного{О;ч:прил} ,{одн} с_перилами{Б;ч:предл,сущ} позолоченными{О;п:сп;ч:прич;ор:позолоче_ыми:нн:nn_pref|nn_sov} ,{одн} сходит{С;ч:гл} прямо{Б;ч:нар} в_зелены{О;ч:предл,прил} сады{Б;ч:сущ} .'
+ ]},
+ {a:'Ф. М. Достоевский',w:'Дядюшкин сон',g:'тысячи душ — столько крепостных крестьян принадлежало имению; верста — старая мера длины, чуть больше километра; наследник — тот, кому достаётся имущество',s:[
+  'Князь{П;ч:сущ} ,{обос} совершенно{Б;ч:нар;ор:соверше_о:нн:nn_nar} неожиданно{Б;ч:нар;ор:неожида_о:нн:nn_nar|nn_isk2} ,{обос} сделался{С;ч:гл} её{О;ч:мест} законным{О;ч:прил;ор:зако_ым:нн:nn_osn} наследником{С;ч:сущ} .',
+  '#одн Четыре{О;ч:числ} тысячи{П;ч:сущ} душ{О;ч:сущ} великолепнейшего{О;ч:прил} имения{О;ч:сущ} ,{обос} ровно{ч:част} в_шестидесяти{О;ч:предл,числ} вёрстах{Б;ч:сущ} от_Мордасова{Б;ч:предл,сущ} ,{обос} достались{С;ч:гл} ему{Д;ч:мест} одному{Д;ч:мест} ,{обос} безраздельно{Б;ч:нар;ор:безраздель_о:н:nn_nar} .',
+  'Он{П;ч:мест} немедленно{Б;ч:нар;ор:немедле_о:нн:nn_nar|nn_isk2} собрался{С;ч:гл} для_окончания{Б;ч:предл,сущ} своих{О;ч:мест} дел{О;ч:сущ} в_Петербург{Б;ч:предл,сущ} .'
+ ]},
+ {a:'Н. В. Гоголь',w:'Тарас Бульба',g:'жердь — длинная тонкая палка; нестерпимый — такой, который трудно вынести',s:[
+  'Совершенно{Б;ч:нар;ор:соверше_о:нн:nn_nar} почерневшие{О;ч:прич} деревянные{О;ч:прил;ор:деревя_ые:нн:nn_isk1} дома{П;ч:сущ} ,{обос} со_множеством{О;ч:предл,сущ} протянутых{О;о;п:сп;ч:прич} из_окон{Б;о;ч:предл,сущ} жердей{О;о;ч:сущ} ,{обос} увеличивали{С;ч:гл} ещё{ч:част} более{Б;ч:нар} мрак{Д;ч:сущ} .',
+  '#сл Изредка{Б;ч:нар} краснела{С;ч:гл} между_ними{Б;ч:предл,мест} кирпичная{О;ч:прил} стена{П;ч:сущ} ,{сл} но{ч:союз} и{ч:част} та{П;ч:мест} уже{Б;ч:нар} во_многих{О;ч:предл,мест} местах{Б;ч:сущ} превращалась{С;ч:гл} совершенно{Б;ч:нар} в_чёрную{Д;ч:предл,прил} .',
+  'Иногда{Б;ч:нар} только{ч:част} вверху{Б;ч:нар} оштукатуренный{О;п:сп;ч:прич;ор:оштукатуре_ый:нн:nn_pref|nn_sov} кусок{П;ч:сущ} стены{О;ч:сущ} ,{об} обхваченный{О;о;п:сп;ч:прич;ор:обхваче_ый:нн:nn_pref|nn_sov|nn_dep} солнцем{Д;о;ч:сущ} ,{об} блистал{С;ч:гл} нестерпимою{О;ч:прил} для_глаз{О;ч:предл,сущ} белизною{Д;ч:сущ} .'
+ ]},
+ {a:'А. С. Пушкин',w:'Арап Петра Великого',g:'зала — старая форма слова «зал»; затворничество — жизнь взаперти, вдали от людей; указ — приказ государя',s:[
+  'Гаврила{П;ч:сущ} Афанасьевич{П;ч:сущ} ожидал{С;ч:гл} несколько{Д;ч:числ} родных{Д;ч:прил} и{ч:союз} приятелей{Д;ч:сущ} .',
+  'В_старинной{О;ч:предл,прил;ор:стари_ой:нн:nn_osn} зале{Б;ч:сущ} накрывали{С;ч:гл} длинный{О;ч:прил;ор:дли_ый:нн:nn_osn} стол{Д;ч:сущ} .',
+  '#одн Гости{П;ч:сущ} съезжались{С;ч:гл} с_жёнами{Б;ч:предл,сущ} и{ч:союз} дочерьми{Б;ч:сущ} ,{об} наконец{Б;ч:нар} освобождёнными{О;о;п:сп;ч:прич;ор:освобождё_ыми:нн:nn_pref|nn_sov|nn_dep} от_затворничества{Д;о;ч:предл,сущ} домашнего{О;о;ч:прил} указами{Д;о;ч:сущ} государя{О;о;ч:сущ} и{о;ч:союз} собственным{О;о;ч:прил;ор:собстве_ым:нн:nn_enn} его{О;о;ч:мест} примером{Д;о;ч:сущ} .'
+ ]},
+ {a:'Л. Н. Толстой',w:'Война и мир. Том 4',g:'невидные — такие, которых не видно; расположение лагеря — место, где стоит войско',s:[
+  '#одн Леса{П;ч:сущ} и{ч:союз} поля{П;ч:сущ} ,{обос} невидные{О;ч:прил} прежде{Б;ч:нар} вне_расположения{Б;ч:предл,сущ} лагеря{О;ч:сущ} ,{обос} открывались{С;ч:гл} теперь{Б;ч:нар} вдали{Б;ч:нар} .',
+  '#одн И{ч:союз} ещё{ч:част} дальше{Б;ч:нар} этих{О;ч:мест} лесов{О;ч:сущ} и{ч:союз} полей{О;ч:сущ} виднелась{С;ч:гл} светлая{О;ч:прил} ,{одн} колеблющаяся{О;п:дн;ч:прич;ор:колебл_щаяся:ю:pr_i1} ,{одн} зовущая{О;о;п:дн;ч:прич;ор:зов_щая:у:pr_i1} в_себя{Д;о;ч:предл,мест} бесконечная{О;ч:прил} даль{П;ч:сущ} .',
+  'Пьер{П;ч:сущ} взглянул{С;ч:гл} в_небо{Б;ч:предл,сущ} ,{одн} в_глубь{Б;ч:предл,сущ} уходящих{О;п:дн;ч:прич;ор:уход_щих:я:pr_i2} ,{одн} играющих{О;п:дн;ч:прич;ор:игра_щих:ю:pr_i1} звёзд{О;ч:сущ} .'
+ ]},
+ {a:'Л. Н. Толстой',w:'Война и мир. Том 1',g:'Тушин — командир артиллерийской батареи; говор — негромкий шум голосов',s:[
+  '#сл Он{П;ч:мест} видел{С;ч:гл} ,{сл} что{ч:союз} Тушин{П;ч:сущ} всею{О;ч:мест} душой{Б;ч:сущ} хотел{С;ч:гл} и{ч:союз} ничем{Д;ч:мест} не_мог{С;ч:част,гл} помочь{С;ч:гл} ему{Д;ч:мест} .',
+  '#одн Со_всех{О;ч:предл,мест} сторон{Б;ч:сущ} слышны{С;ч:прил} были{С;ч:гл} шаги{П;ч:сущ} и{ч:союз} говор{П;ч:сущ} проходивших{О;п:дп;ч:прич;ор:проход_вших:и:pr_vsh} ,{одн} проезжавших{О;п:дп;ч:прич;ор:проезж_вших:а:pr_vsh} и{ч:союз} кругом{Б;ч:нар} размещавшейся{О;п:дп;ч:прич;ор:размещ_вшейся:а:pr_vsh} пехоты{О;ч:сущ} .',
+  '#одн Звуки{П;ч:сущ} голосов{О;ч:сущ} ,{одн} шагов{О;ч:сущ} и{ч:союз} переставляемых{О;п:сн;ч:прич;ор:переставля_мых:е:pr_i1} в_грязи{Б;о;ч:предл,сущ} лошадиных{О;ч:прил} копыт{О;ч:сущ} ,{одн} ближний{О;ч:прил} и{ч:союз} дальний{О;ч:прил} треск{П;ч:сущ} дров{О;ч:сущ} сливались{С;ч:гл} в_один{О;ч:предл,мест} колеблющийся{О;п:дн;ч:прич;ор:колебл_щийся:ю:pr_i1} гул{Б;ч:сущ} .'
+ ]},
+ {a:'Н. В. Гоголь',w:'Мёртвые души',g:'графинчик — небольшой стеклянный сосуд для напитков; маятник — качающийся груз в часах',s:[
+  '#одн,сл На_одном{О;ч:предл,мест} столе{Б;ч:сущ} стоял{С;ч:гл} даже{ч:част} сломанный{О;п:сп;ч:прич;ор:слом_нный:а:pr_ann} стул{П;ч:сущ} ,{сл} и{ч:союз} рядом{Б;ч:нар} с_ним{Б;ч:предл,мест} часы{П;ч:сущ} с_остановившимся{О;п:дп;ч:предл,прич;ор:останов_вшимся:и:pr_vsh} маятником{О;ч:сущ} ,{сл} к_которому{Д;ч:предл,мест} паук{П;ч:сущ} уже{Б;ч:нар} приладил{С;ч:гл} паутину{Д;ч:сущ} .',
+  '#одн Тут{Б;ч:нар} же{ч:част} стоял{С;ч:гл} прислонённый{О;п:сп;ч:прич} боком{Б;ч:нар} к_стене{Д;ч:предл,сущ} шкаф{П;ч:сущ} с_старинным{О;ч:предл,прил} серебром{Б;ч:сущ} ,{одн} графинчиками{Б;ч:сущ} и{ч:союз} китайским{О;ч:прил} фарфором{Б;ч:сущ} .',
+  '#одн В_ряд{Б;ч:предл,сущ} с_ними{Б;ч:предл,мест} занимала{С;ч:гл} полстены{Д;ч:сущ} огромная{О;ч:прил} почерневшая{О;п:дп;ч:прич;ор:почерн_вшая:е:pr_vsh} картина{П;ч:сущ} ,{об} писанная{О;о;п:сп;ч:прич;ор:пис_нная:а:pr_ann} масляными{О;о;ч:прил} красками{Д;о;ч:сущ} ,{одн} изображавшая{О;о;п:дп;ч:прич} цветы{Д;о;ч:сущ} ,{одн} фрукты{Д;о;ч:сущ} ,{одн} разрезанный{О;о;п:сп;ч:прич;ор:разрез_нный:а:pr_ann} арбуз{Д;о;ч:сущ} ,{одн} кабанью{О;о;ч:прил} морду{Д;о;ч:сущ} и{ч:союз} висевшую{О;о;п:дп;ч:прич;ор:вис_вшую:е:pr_vsh} головою{Б;о;ч:сущ} вниз{Б;о;ч:нар} утку{Д;о;ч:сущ} .'
+ ]},
+ {a:'Л. Н. Толстой',w:'Анна Каренина',g:'трутень — самец пчелы; пчельник — место, где стоят ульи; караульщица — та, кто стережёт; сбирающихся — собирающихся; достояние — то, что принадлежит кому-нибудь',s:[
+  '#одн,сл В_ушах{Б;ч:предл,сущ} не_переставая{Б;ч:част,дееп} отзывались{С;ч:гл} разнообразные{О;ч:прил} звуки{П;ч:сущ} то{ч:союз} занятой{О;о;п:сп;ч:прич} делом{Д;о;ч:сущ} ,{одн} быстро{Б;о;ч:нар} пролетающей{О;о;п:дн;ч:прич;ор:пролета_щей:ю:pr_i1} рабочей{О;о;ч:прил} пчёлы{О;ч:сущ} ,{одн} то{ч:союз} трубящего{О;о;п:дн;ч:прич;ор:труб_щего:я:pr_i2} ,{одн} празднующего{О;о;п:дн;ч:прич;ор:праздну_щего:ю:pr_i1} трутня{О;ч:сущ} ,{одн} то{ч:союз} встревоженных{О;о;п:сп;ч:прич} ,{одн} оберегающих{О;о;п:дн;ч:прич;ор:оберега_щих:ю:pr_i1} от_врага{Д;о;ч:предл,сущ} своё{О;о;ч:мест} достояние{Д;о;ч:сущ} ,{одн} сбирающихся{О;о;п:дн;ч:прич;ор:сбира_щихся:ю:pr_i1} жалить{Д;о;ч:гл} пчёл-караульщиц{О;ов;ч:сущ} .',
+  '#одн На_той{О;ч:предл,мест} стороне{Б;ч:сущ} ограды{О;ч:сущ} старик{П;ч:сущ} строгал{С;ч:гл} обруч{Д;ч:сущ} и{ч:союз} не_видал{С;ч:част,гл} Левина{Д;ч:сущ} .',
+  'Левин{П;ч:сущ} ,{дееп} не_окликая{Б;ч:част,дееп} его{Д;ч:мест} ,{дееп} остановился{С;ч:гл} на_середине{Б;ч:предл,сущ} пчельника{О;ч:сущ} .'
+ ]},
+ {a:'Н. В. Гоголь',w:'Тарас Бульба',g:'бурса — духовное училище, где ученики жили при школе; дюжие — сильные, крепкие; исподлобья — недружелюбно, из-под нахмуренных бровей; семинарист — учащийся духовной семинарии',s:[
+  '#одн Такими{О;ч:мест} словами{Б;ч:сущ} встретил{С;ч:гл} старый{О;ч:прил} Бульба{П;ч:сущ} двух{О;ч:числ} сыновей{Д;ч:сущ} своих{О;ч:мест} ,{об} учившихся{О;о;п:дп;ч:прич;ор:уч_вшихся:и:pr_vsh} в_киевской{О;о;ч:предл,прил} бурсе{Б;о;ч:сущ} и{о;ч:союз} приехавших{О;о;п:дп;ч:прич;ор:приех_вших:а:pr_vsh} домой{Б;о;ч:нар} к_отцу{Б;о;ч:предл,сущ} .',
+  'Сыновья{П;ч:сущ} его{О;ч:мест} только{ч:част} что{ч:част} слезли{С;ч:гл} с_коней{Б;ч:предл,сущ} .',
+  'Это{П;ч:мест} были{С;ч:гл} два{О;ч:числ} дюжие{О;ч:прил} молодца{С;ч:сущ} ,{об} ещё{ч:част} смотревшие{О;о;п:дп;ч:прич;ор:смотр_вшие:е:pr_vsh} исподлобья{Б;о;ч:нар} ,{сравн} как{ч:союз} недавно{Б;ч:нар} выпущенные{О;п:сп;ч:прич;ор:выпущ_нные:е:pr_enn} семинаристы{Б;ч:сущ} .'
+ ]},
+ {a:'Л. Н. Толстой',w:'Воскресение',g:'помещение для свиданий — комната, где заключённые встречаются с близкими',s:[
+  'Пропуская{Б;ч:дееп} спешащих{Д;ч:прич;ор:спеш_щих:а:pr_i2} вперёд{Б;ч:нар} ,{дееп} он{П;ч:мест} вошёл{С;ч:гл} последним{Б;ч:прил} в_помещение{Б;ч:предл,сущ} ,{об} назначенное{О;о;п:сп;ч:прич;ор:назнач_нное:е:pr_enn} для_свиданий{Б;о;ч:предл,сущ} .',
+  '#сл Первое{П;ч:числ} ,{сл} что{ч:союз} поразило{С;ч:гл} его{Д;ч:мест} ,{сл} когда{ч:союз} он{П;ч:мест} ,{дееп} отворив{Б;ч:дееп} дверь{Д;ч:сущ} ,{дееп} вошёл{С;ч:гл} в_это{О;ч:предл,мест} помещение{Б;ч:сущ} ,{сл} был{С;ч:гл} оглушающий{О;п:дн;ч:прич;ор:оглуша_щий:ю:pr_i1} ,{одн} сливающийся{О;о;п:дн;ч:прич;ор:слива_щийся:ю:pr_i1} в_один{О;о;ч:предл,мест} гул{Б;о;ч:сущ} крик{С;ч:сущ} сотни{О;ч:сущ} голосов{О;ч:сущ} .',
+  '#одн,сл Только{ч:част} ближе{Б;ч:нар} подойдя{Б;ч:дееп} к_людям{Д;ч:предл,сущ} ,{дееп} точно{ч:част} как{ч:союз} мухи{Б;ч:сущ} насевшим{О;п:дп;ч:прич} на_сахар{Б;ч:предл,сущ} ,{одн} прилепившимся{О;п:дп;ч:прич;ор:прилеп_вшимся:и:pr_vsh} к_сетке{Д;ч:предл,сущ} ,{об} делившей{О;п:дп;ч:прич;ор:дел_вшей:и:pr_vsh} комнату{Д;ч:сущ} надвое{Б;ч:нар} ,{об} Нехлюдов{П;ч:сущ} понял{С;ч:гл} ,{сл} в_чём{С;ч:предл,мест} дело{П;ч:сущ} .'
+ ]},
+ {a:'М. Горький',w:'Старуха Изергиль',g:'',s:[
+  'Они{П;ч:мест} бросились{С;ч:гл} за_ним{Б;ч:предл,мест} ,{обос} очарованные{О;п:сп;ч:прич} .',
+  '#сл Тогда{Б;ч:нар} лес{П;ч:сущ} снова{Б;ч:нар} зашумел{С;ч:гл} ,{дееп} удивлённо{Б;ч:нар} качая{Б;ч:дееп} вершинами{Д;ч:сущ} ,{сл} но{ч:союз} его{О;ч:мест} шум{П;ч:сущ} был{С;ч:гл} заглушён{С;к;п:сп;ч:прич} топотом{Д;ч:сущ} бегущих{О;п:дн;ч:прич;ор:бег_щих:у:pr_i1} людей{О;ч:сущ} .',
+  '#одн Все{П;ч:мест} бежали{С;ч:гл} быстро{Б;ч:нар} и{ч:союз} смело{Б;ч:нар} ,{об} увлекаемые{О;п:сн;ч:прич;ор:увлека_мые:е:pr_i1} чудесным{О;ч:прил} зрелищем{Д;ч:сущ} горящего{О;п:дн;ч:прич;ор:гор_щего:я:pr_i2} сердца{О;ч:сущ} .'
+ ]}
 ];
 // ---------- глава Н и НН ----------
 const NN={
@@ -3491,6 +3567,15 @@ Object.assign(PR,{tests:PR_TESTS});
 // Размеченный материал «Причастия» для механик тренажёра (src/js/core/mech.js).
 // Один раз размеченное слово или предложение даёт много разных заданий.
 // Разряды: дн — действ. наст., дп — действ. прош., сн — страд. наст., сп — страд. прош., пр — прилагательное.
+// Правила гласных в суффиксах причастий для связных текстов (src/data/corpus/texts.js, пометки ор:…:pr_…); механика «Текст с пропусками» (tx).
+// tw — пара букв для кнопок: ответ → варианты (гласная и её «двойник» по спряжению); читается orthOpts() в mech.js (см. заметки главы: включение tx — после правки orthOpts).
+Object.assign(ORTHO_R,{
+ pr_i1:{t:'Глагол I спряжения (они …ут, …ют) → -ущ-/-ющ-, -ем-',topic:'prichastie',l:5,tw:{у:['а','у'],ю:['ю','я'],е:['е','и']}},
+ pr_i2:{t:'Глагол II спряжения (они …ат, …ят) → -ащ-/-ящ-, -им-',topic:'prichastie',l:5,tw:{а:['а','у'],я:['ю','я'],и:['е','и']}},
+ pr_vsh:{t:'Перед -вш- — та же гласная, что перед -ть в неопределённой форме',topic:'prichastie',l:5,tw:{а:['а','я'],я:['а','я'],е:['е','и'],и:['е','и']}},
+ pr_ann:{t:'Страдательное причастие прошедшего времени от глаголов на -ать, -ять → -анн-, -янн-',topic:'prichastie',l:5,tw:{а:['а','е'],я:['я','е']}},
+ pr_enn:{t:'Страдательное причастие прошедшего времени от глаголов на -еть, -ить, -ти, -чь → -енн-, -ённ-',topic:'prichastie',l:5,tw:{е:['а','е']}}
+});
 const PR_WK={
  // уроки механик (с 13.11.2026 причастный оборот — урок 3): общий список в mech.js — по умолчанию прежняя нумерация, здесь — нынешняя
  mech:{hlw:[1,2],hls:[1,3],cm:[3],sx:[1,6,3],bw:[4],mp:[4,5],gr:[2],pr:[4],mx:[2],gw:[5],fo:[5],gs:[],gt:[],tx:[],nw:[7]},
@@ -84022,6 +84107,7 @@ function tRight(B){
 }
 function tFinish(){
  if(TS.step){stepFinish();return}
+ if(TS.opc){opcFinish();return}
  const c=CHAPTERS[TS.ch],sc=TS.qs.map((B,i)=>tScore(B,TS.ans[i])),sum=sc.reduce((x,y)=>x+y,0),p=sum/TS.qs.length,g=tGrade(p);
  const was=chTestsDone(c);
  S.tests=S.tests||{};const k=tKey(c,TS.key),r=S.tests[k]||{best:0,tries:0};
@@ -84034,6 +84120,7 @@ function tFinish(){
 
 function testsHTML(){
  if(route.v==='step')return stepTestsHTML();
+ if(route.v==='opc')return opcTestsHTML();
  const c=CC();
  if(TS&&TS.ch===c.id&&TSV==='run')return `<div id="tests" class="bktext">${TS.res?tResHTML(c):tRunHTML(c)}</div>`;
  const paused=TS&&TS.ch===c.id&&!TS.res?`<div class="tsrow tspause"><div class="tsinfo"><b>Начатый тест: ${TS.title.replace('Тест по уроку','урок')}</b><span>Отвечено ${TS.ans.filter((a,i)=>tAnswered(TS.qs[i],a)).length} из ${TS.qs.length}</span></div><button class="bkldone" data-tsgo="${TS.key}" data-tscont>Продолжить</button></div>`:'';
@@ -84067,7 +84154,7 @@ function tResHTML(c){
  ${wrong.length?`<h3>Разбор ошибок</h3>${wrong.map(([B,i])=>`<div class="tsm"><div class="q">${tGap(B.text)}${B.w?` <b>${tGap(B.w)}</b>`:''}</div>
   <div class="tsa"><span class="tsn">Ответ: ${tShowAns(B,TS.ans[i])}</span><span class="tsy">Верно: ${tRight(B)}</span></div>${B.why?`<div class="why">${esc(B.why)}</div>`:''}
   <button class="linkbtn" data-ojump="${(B.ch?CHAPTERS[B.ch]:c).lessons[B.l-1].id}">Повторить ${B.ch?`«${chById(B.ch).t}», урок`:'урок'} ${B.l} ›</button></div>`).join('')}`:'<p class="note">Ошибок нет.</p>'}
- <div class="tsnav"><button class="ghost" data-tslist>К списку тестов</button>${TS.step?'<button class="bkldone" data-stgo>Пройти ещё раз</button>':`<button class="bkldone" data-tsgo="${TS.key}">Пройти ещё раз</button>`}</div>`;
+ <div class="tsnav"><button class="ghost" data-tslist>К списку тестов</button>${TS.step?'<button class="bkldone" data-stgo>Пройти ещё раз</button>':TS.opc?'<button class="bkldone" data-opcgo>Пройти ещё раз</button>':`<button class="bkldone" data-tsgo="${TS.key}">Пройти ещё раз</button>`}</div>`;
 }
 function tsRe(){const el=document.getElementById('tests');if(!el){render();return}el.outerHTML=testsHTML();termsIn(document.getElementById('tests'));
  const t=document.getElementById('tests');if(t&&t.getBoundingClientRect().top<0)t.scrollIntoView({block:'start'});const inp=document.querySelector('[data-tsform] input');if(inp&&matchMedia('(hover:hover)').matches)inp.focus()}
@@ -90077,7 +90164,7 @@ function contHTML(){
  <span class="hmcta">${CONT_GO[tab]}${HI.chev}</span></button>`;
 }
 // ---------- серия «дни подряд» и маскот ----------
-// Маскот — простой SVG-совёнок на токенах темы; состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
+// Маскот — простой SVG-человечек-буква «Ё» (две точки сверху — «ушки») на токенах темы; состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
 function mascotHTML(st){
  const eyes=st==='happy'?'<path class="mk-e" d="M33 41q4-6 8 0M59 41q4-6 8 0" fill="none"/>'
   :st==='nudge'?'<circle class="mk-i" cx="37" cy="41" r="4"/><circle class="mk-i" cx="63" cy="41" r="4"/><circle class="mk-s" cx="38.5" cy="39.5" r="1.3"/><circle class="mk-s" cx="64.5" cy="39.5" r="1.3"/>'
@@ -90085,13 +90172,12 @@ function mascotHTML(st){
  const mouth=st==='happy'?'<path class="mk-m" d="M44 52q6 6 12 0" fill="none"/>':st==='nudge'?'<path class="mk-m" d="M46 53q4 3 8 0" fill="none"/>':'<path class="mk-m" d="M46 54h8" fill="none"/>';
  const extra=st==='happy'?'<path class="mk-sp" d="M84 18l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM14 28l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5L9 33l3.5-1.5z"/>'
   :st==='nudge'?'<path class="mk-w" d="M88 52q6-4 6-12" fill="none"/>':'';
- return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="72" height="72" role="img" aria-label="${st==='happy'?'Совёнок радуется':st==='nudge'?'Совёнок ждёт':'Совёнок спокоен'}">
+ return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="72" height="72" role="img" aria-label="${st==='happy'?'Ёшка радуется':st==='nudge'?'Ёшка ждёт':'Ёшка спокоен'}">
  <ellipse class="mk-sh" cx="50" cy="92" rx="26" ry="4"/>
- <path class="mk-ear" d="M26 24l6 12 8-8zM74 24l-6 12-8-8z"/>
+ <circle class="mk-ear" cx="35" cy="13" r="6"/><circle class="mk-ear" cx="65" cy="13" r="6"/>
  <path class="mk-body" d="M50 20c-20 0-30 14-30 34 0 20 12 34 30 34s30-14 30-34c0-20-10-34-30-34z"/>
- <ellipse class="mk-belly" cx="50" cy="68" rx="17" ry="17"/>
  <circle class="mk-ch" cx="29" cy="50" r="4"/><circle class="mk-ch" cx="71" cy="50" r="4"/>
- ${eyes}<path class="mk-beak" d="M47 47h6l-3 5z"/>
+ ${eyes}
  ${mouth}${extra}</svg>`;
 }
 const dayWord=n=>plural(n,'день','дня','дней');
@@ -90321,8 +90407,58 @@ function needHTML(id){
  const miss=o.need.filter(n=>CHAPTERS[n]&&chById(n)&&!chDone(CHAPTERS[n]));if(!miss.length)return '';
  const show=miss.slice(0,3),more=miss.length-show.length;
  return `<aside class="needbox" role="note"><div class="nb"><b>Здесь ${show.length>1?'нужны темы':'нужна тема'} ${show.map(n=>`«${chById(n).t}»`).join(', ')}${more?` и ещё ${more}`:''} — повторить.</b>
- <div class="nl">${show.map(n=>`<button class="linkbtn" data-needgo="${n}">${chById(n).t} ›</button>`).join('')}</div></div>
+ <div class="nl">${show.map(n=>`<button class="linkbtn" data-needgo="${n}">${chById(n).t} ›</button>`).join('')}${opcOk(id)?`<button class="linkbtn opcgo" data-opcpage="${id}">Проверить опоры ›</button>`:''}</div></div>
  <button class="needx" data-needx="${id}" aria-label="Закрыть подсказку"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></aside>`;
+}
+
+
+// ---------- входной мини-тест главы по опорам (Г.4): «Проверить опоры», страница #opc-<глава> ----------
+// 5–8 вопросов из тестов глав-опор (OPORY.need): по 1–2 вопроса на опору, из разных уроков. Ничего не блокирует.
+// Поле S.opc {<глава>:{last,best,tries,at,weak:[[глава-опора,номер урока],…]}} — только добавлено; нет в старых сохранениях — ничего страшного.
+const opcNeed=id=>{const o=OPORY[id];return o?o.need.filter(n=>CHAPTERS[n]&&CHAPTERS[n].tests&&CHAPTERS[n].tests.length&&chById(n)):[]};
+const opcOk=id=>!!CHAPTERS[id]&&opcNeed(id).length>0;
+const opcRes=id=>{const o=S.opc;return o&&typeof o==='object'&&o[id]&&typeof o[id]==='object'?o[id]:null};
+function opcBtnHTML(id){
+ if(!opcOk(id))return '';const r=opcRes(id);
+ return `<button class="stbtn opcbtn" data-opcpage="${id}">${modeIco('tests',20)}<span class="b"><b>Проверить опоры</b><small>5–8 вопросов по темам, которые нужны для этой главы${r?` · прошлый раз: ${r.last}`:''}</small></span><span class="hmact">Проверить</span></button>`;
+}
+function opcStart(id){
+ const need=opcNeed(id),undone=need.filter(n=>!chDone(CHAPTERS[n])),list=[...undone,...need.filter(n=>!undone.includes(n))].slice(0,8);
+ const T=Math.min(8,Math.max(5,list.length*2)),cap=Math.ceil(T/list.length);
+ const lists=list.map(n=>{const c=CHAPTERS[n];
+  return roundRobin(shuffle(c.lessons.map((_,i)=>i)).map(i=>shuffle(c.tests.filter(x=>x.l===i+1))),cap).map(sl=>[n,sl])});
+ const pick=shuffle(roundRobin(lists,T));
+ TS={ch:null,opc:id,key:'opc',title:'Проверка опор',qs:pick.map(([n,sl])=>{const B=tBuild(sl);B.ch=n;return B}),i:0,ans:[],t0:Date.now(),res:null};
+}
+function opcFinish(){
+ const sc=TS.qs.map((B,i)=>tScore(B,TS.ans[i])),sum=sc.reduce((x,y)=>x+y,0),p=sum/TS.qs.length,g=tGrade(p);
+ const weak=[];TS.qs.forEach((B,i)=>{if(sc[i]<1&&!weak.some(w=>w[0]===B.ch&&w[1]===B.l))weak.push([B.ch,B.l])});
+ if(!S.opc||typeof S.opc!=='object')S.opc={};
+ const r=S.opc[TS.opc]||{best:0,tries:0};r.tries=(r.tries||0)+1;r.last=g;r.best=Math.max(r.best||0,g);r.at=today();r.weak=weak;S.opc[TS.opc]=r;
+ S.tlog=(S.tlog||[]).concat({t:'opc:'+TS.opc,g,p:Math.round(p*100),n:TS.qs.length,at:Date.now(),sec:Math.round((Date.now()-TS.t0)/1000)}).slice(-300);
+ save();TS.res={sc,sum,p,g};
+}
+// «повтори: глава, урок» — по слабым местам последней проверки
+function opcWeakHTML(id){
+ const r=opcRes(id);if(!r||!Array.isArray(r.weak))return '';
+ const ws=r.weak.filter(w=>Array.isArray(w)&&CHAPTERS[w[0]]&&CHAPTERS[w[0]].lessons[w[1]-1]);
+ if(!ws.length)return r.tries?`<div class="opcsum ok"><b>Опоры в порядке</b><span>Ошибок в последней проверке нет. Можно начинать главу.</span></div>`:'';
+ return `<div class="opcsum"><b>Повтори</b><ul>${ws.map(w=>`<li><button class="linkbtn" data-ojump="${CHAPTERS[w[0]].lessons[w[1]-1].id}">«${chById(w[0]).t}», урок ${w[1]}. ${CHAPTERS[w[0]].lessons[w[1]-1].t} ›</button></li>`).join('')}</ul></div>`;
+}
+function opcTestsHTML(){
+ const id=route.id,r=opcRes(id);
+ if(TS&&TS.opc===id&&TSV==='run')return `<div id="tests" class="bktext">${TS.res?tResHTML(null):tRunHTML(null)}</div>`;
+ const paused=TS&&TS.opc===id&&!TS.res?`<div class="tsrow tspause"><div class="tsinfo"><b>Начатая проверка</b><span>Отвечено ${TS.ans.filter((a,i)=>tAnswered(TS.qs[i],a)).length} из ${TS.qs.length}</span></div><button class="bkldone" data-opccont>Продолжить</button></div>`:'';
+ return `<div id="tests" class="bktext"><div class="tsrow fin"><div class="tsinfo"><b>Мини-тест по опорам</b><span>5–8 вопросов из тестов глав-опор, в случайном порядке${r?` · прошлая оценка ${r.last} · попыток ${r.tries}`:' · ещё не проходилась'}</span></div>
+ <button class="${r?'ghost':'bkldone'}" data-opcgo>${r?'Ещё раз':'Начать'}</button></div>${paused}${opcWeakHTML(id)}</div>`;
+}
+function opcHTML(id){
+ const m=chById(id),need=opcNeed(id);
+ return `<div class="bkhbar"><div class="in"><button class="back" data-ch="${id}">‹ К главе</button><span class="tools"><span class="where">${stepLabel(id)}</span></span></div></div><div class="wrap stepw">
+ <header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div class="kick">Проверка опор</div><h2>${m.t}</h2><div class="sub">Короткий вход в главу: вопросы по темам, которые для неё нужны. Ничего не блокируется: можно пропустить и начать главу сразу.</div></div></header>
+ <section class="stsec"><h3 class="hmh">Темы-опоры</h3><ol class="stchs">${need.map(n=>{const c=CHAPTERS[n];return `<li class="stch"><button data-stchap="${n}"><span class="cn">${chNum(chById(n))}</span><span class="cb"><span class="ct">${chById(n).t}</span><span class="cs">${chDone(c)?'✓ пройдена':'ещё не пройдена'}</span></span><span class="lgo" aria-hidden="true">›</span></button></li>`}).join('')}</ol></section>
+ <section class="stsec"><h3 class="hmh">Вопросы</h3>${opcTestsHTML()}</section>
+ <nav class="bpn"><button data-ch="${id}">‹ К главе</button><button data-opcgochap="${id}">Начать главу ›</button></nav></div>`;
 }
 
 // блок «Повторить ступень» в содержании и в конце последней главы ступени
@@ -90398,6 +90534,12 @@ document.addEventListener('click',e=>{
  if(d.needx){S.needx=S.needx||{};S.needx[d.needx]=1;save();const bx=b.closest('.needbox');if(bx)bx.remove();return}
  if(d.stepgo){go({v:'step',n:+d.stepgo});TSV=TS&&TS.step===+d.stepgo?'run':'list';render();return}
  if(d.stchap){S.tab='theory';save();go({v:'ch',id:d.stchap});return}
+ if(d.opcpage){go({v:'opc',id:d.opcpage});TSV=TS&&TS.opc===d.opcpage?'run':'list';render();return}
+ if(d.opcgochap){openChFirst(d.opcgochap);return}
+ if(route.v==='opc'){
+  if('opcgo' in d){opcStart(route.id);TSV='run';tsRe();return}
+  if('opccont' in d){TSV='run';tsRe();return}
+  return}
  if(route.v!=='step')return;
  if('stgo' in d){stepTStart(route.n);TSV='run';tsRe();return}
  if('stcont' in d){TSV='run';tsRe();return}
@@ -90427,6 +90569,7 @@ function hashFor(r){
  if(r.v==='study')return 'study-'+r.id;
  if(r.v==='home'||r.v==='me')return r.v;
  if(r.v==='step')return 'step-'+r.n;
+ if(r.v==='opc')return 'opc-'+r.id;
  if(r.v!=='ch')return viewHash();
  const ch=CHAPTERS[r.id],tab=ch?chTab(ch):'theory';
  if(CLR&&tab==='classic')return 'ex-'+r.id+'-'+clFmt(CLR,true);
@@ -90465,6 +90608,8 @@ function fromHash(){const h=location.hash.slice(1);
   return}
  const sm=h.match(/^step-(\d+)$/);
  if(sm&&STEPS[sm[1]-1]){route={v:'step',n:+sm[1]};TSV=TS&&TS.step===route.n?'run':'list';return}
+ const om=h.match(/^opc-([a-z0-9_]+)$/);
+ if(om&&opcOk(om[1])){route={v:'opc',id:om[1]};TSV=TS&&TS.opc===om[1]?'run':'list';return}
  if(h===''||h==='home'){route={v:'home'};return}
  if(h==='me'){route={v:'me'};return}
  if(h.startsWith('w-')) route={v:'word',id:decodeURIComponent(h.slice(2))};
@@ -90513,7 +90658,7 @@ function chapterHTML(id){
  let h=`<div class="bkhbar"><div class="in"><button class="back" data-home>‹ Оглавление</button><span class="tools"><span class="where">${meta.part.t} · ${meta.part.ch.indexOf(meta)+1} из ${meta.part.ch.length}</span>${ch?`<button class="ibtn" data-outline="${id}" aria-label="Содержание главы"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Содержание</button>`:''}</span></div></div><div class="wrap${ch?' chwide':''}">`;
  if(ch)h+=`<div class="chgrid">${chSide(id)}<div class="chmain">`;
  h+=`<header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div class="kick">Глава ${meta.part.n}.${meta.part.ch.indexOf(meta)+1} · ${stepLabel(id)}${ch&&chTestsDone(ch)?' · <span class="chok">✓ глава завершена</span>':''}</div><h2>${meta.t}</h2><div class="sub">${ch?ch.s:meta.s}</div></div>${ch?`<button class="easy" data-easy aria-pressed="${!!S.easy}"><span class="sw"><i></i></span>Проще</button>`:''}</header>`;
- if(ch)h+=needHTML(id);
+ if(ch)h+=needHTML(id)||opcBtnHTML(id);
  if(!ch){
   h+=`<div class="bins btip"><div class="h">Глава готовится</div><p>В образце готова одна глава — «Н и НН». На ней показано, как будут устроены все остальные: уроки, схема, упражнения, тонкости и карточки.</p><div><button class="linkbtn" data-ch="nn">Открыть «Н и НН» ›</button></div></div>`;
   if(meta.deck) h+=`<div class="bins bkey"><div class="h">Карточки уже есть</div><p>Для этой темы готова колода «${DECKS[meta.deck].t}».</p><div><button class="linkbtn" data-deck="${meta.deck}">Открыть колоду ›</button></div></div>`;
@@ -90706,12 +90851,14 @@ function render(){
  else if(route.v==='home') app.innerHTML=homeHTML();
  else if(route.v==='me') app.innerHTML=meHTML();
  else if(route.v==='step') app.innerHTML=stepHTML(route.n);
+ else if(route.v==='opc') app.innerHTML=opcHTML(route.id);
  else app.innerHTML=tocHTML();
  if(route.v==='ch')statWhere();
  meBind();
  const q=$('#q'); if(q){q.addEventListener('input',search);}
  if(route.v==='ch'&&(S.tab||'theory')==='theory'){enhance(app.querySelector('.bktext'),route.id);linkWords(app.querySelector('.bktext'))}
  else if(route.v==='ch')termsIn(app.querySelector('.chmain')||app);
+ else if(route.v==='opc'){const el=document.getElementById('tests');if(el)termsIn(el)}
  else if(route.v==='step')['tests','trainer'].forEach(i=>{const el=document.getElementById(i);if(el)termsIn(el)});
  const gq=$('#gq');if(gq)gq.addEventListener('input',e=>{GQ=e.target.value;$('#glist').innerHTML=glossList()});
  const dq=$('#dq');if(dq)dq.addEventListener('input',e=>{DQ=e.target.value;$('#dlist').innerHTML=dictList()});

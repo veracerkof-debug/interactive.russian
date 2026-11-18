@@ -179,11 +179,9 @@
 .mk{flex:0 0 auto;width:72px;height:72px;overflow:visible}
 .mk-sh{fill:var(--fill2)}
 .mk-body,.mk-ear{fill:color-mix(in srgb,var(--tint) 55%,var(--cell));stroke:color-mix(in srgb,var(--tint) 75%,var(--ink));stroke-width:2;stroke-linejoin:round}
-.mk-belly{fill:color-mix(in srgb,var(--tint) 18%,var(--cell))}
 .mk-ch{fill:color-mix(in srgb,var(--red) 35%,var(--cell));opacity:.7}
 .mk-i{fill:var(--ink)}.mk-s{fill:var(--cell)}
 .mk-e,.mk-m{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
-.mk-beak{fill:var(--tint);stroke:var(--tint-text);stroke-width:1;stroke-linejoin:round}
 .mk-sp{fill:var(--tint)}
 .mk-w{stroke:var(--tint-text);stroke-width:2.6;stroke-linecap:round}.mk-b{stroke:none}
 .mk-happy{animation:mkhop 2.4s ease-in-out 1}

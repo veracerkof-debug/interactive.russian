@@ -86,6 +86,7 @@ X.forEach(e=>{if(!e||!e.body)return;const n=`упражнение №${e.n}`;
 {const SPL=/(?:^|\s)\d{1,2}[.)]\s/,CL=x=>x.replace(/\([А-ЯЁ]\. .*?\)|Пояснения:.*$/g,'').split(/\s+[—–]\s+(?=[а-яёА-ЯЁ«"(]|«)/)[0].trim();
  const pts=[],per=[];
  X.forEach(e=>{if(!e||!e.body||e.os)return;
+  if(/\)[¹²³⁴]/.test(String(e.body)))return; // линейные схемы: «…» — не пропуск
   const bs=String(e.body).replace(/<br\s*\/?>/g,' ').split(SPL).map(x=>x.replace(/\([А-ЯЁ]\. .*?\)|Пояснения:.*$/g,'').trim()).filter(Boolean);
   const ks=String(e.key||'').replace(/<br\s*\/?>/g,' ').split(SPL).map(CL).filter(Boolean);
   const mine=[];

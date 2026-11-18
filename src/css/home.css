@@ -169,3 +169,24 @@
 .mewipe .mebox{margin-top:8px}
 .mered{color:var(--red)}
 .mebtns .mered2{background:var(--red);color:#fff}
+
+/* серия «дни подряд» и маскот: токены темы, без своих цветов — тёмная тема подхватывается сама */
+.hmsk{display:flex;gap:14px;align-items:center}
+.hmsk .b{min-width:0;flex:1 1 auto}
+.hmsk .hmh{margin:0 0 2px}
+.hmsk .hmnote{margin:2px 0}
+.hmnote.sm{font-size:12px;color:var(--l3)}
+.mk{flex:0 0 auto;width:72px;height:72px;overflow:visible}
+.mk-sh{fill:var(--fill2)}
+.mk-body,.mk-ear{fill:color-mix(in srgb,var(--tint) 55%,var(--cell));stroke:color-mix(in srgb,var(--tint) 75%,var(--ink));stroke-width:2;stroke-linejoin:round}
+.mk-belly{fill:color-mix(in srgb,var(--tint) 18%,var(--cell))}
+.mk-ch{fill:color-mix(in srgb,var(--red) 35%,var(--cell));opacity:.7}
+.mk-i{fill:var(--ink)}.mk-s{fill:var(--cell)}
+.mk-e,.mk-m{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
+.mk-beak{fill:var(--tint);stroke:var(--tint-text);stroke-width:1;stroke-linejoin:round}
+.mk-sp{fill:var(--tint)}
+.mk-w{stroke:var(--tint-text);stroke-width:2.6;stroke-linecap:round}.mk-b{stroke:none}
+.mk-happy{animation:mkhop 2.4s ease-in-out 1}
+@keyframes mkhop{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}60%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.mk-happy{animation:none}}
+@media (max-width:380px){.hmsk{gap:10px}.mk{width:60px;height:60px}}

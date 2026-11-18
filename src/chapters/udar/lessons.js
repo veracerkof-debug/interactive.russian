@@ -127,7 +127,7 @@ const UD={
    <tr><td><span class="ex">а́тлас</span> — сборник карт</td><td><span class="ex">атла́с</span> — блестящая ткань</td></tr>
    <tr><td><span class="ex">хло́пок</span> — растение, из него делают ткань</td><td><span class="ex">хлопо́к</span> — удар в ладоши</td></tr>
    <tr><td><span class="ex">о́рган</span> — часть тела (сердце, лёгкие)</td><td><span class="ex">орга́н</span> — музыкальный инструмент</td></tr>
-   <tr><td><span class="ex">ле́дник</span> — погреб со льдом</td><td><span class="ex">ледни́к</span> — ледяная река в горах</td></tr>
+   <tr><td><span class="ex">ле́дник</span> — погреб со льдом</td><td><span class="ex">ледни́к</span> — движущаяся ледяная масса</td></tr>
    <tr><td><span class="ex">па́рить</span> — обдавать паром</td><td><span class="ex">пари́ть</span> — плавно летать</td></tr>
    <tr><td><span class="ex">у́же</span> — более узкий</td><td><span class="ex">уже́</span> — к этому времени</td></tr>
    <tr><td><span class="ex">по́том</span> — пот (облился по́том)</td><td><span class="ex">пото́м</span> — после</td></tr>

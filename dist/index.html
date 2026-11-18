@@ -880,13 +880,9 @@ h4[id],.bkles{scroll-margin-top:72px}
 .hmsk .hmnote{margin:2px 0}
 .hmnote.sm{font-size:12px;color:var(--l3)}
 .mk{flex:0 0 auto;width:72px;height:72px;overflow:visible}
-.mk-sh{fill:var(--fill2)}
-.mk-body,.mk-ear{fill:color-mix(in srgb,var(--tint) 55%,var(--cell));stroke:color-mix(in srgb,var(--tint) 75%,var(--ink));stroke-width:2;stroke-linejoin:round}
-.mk-ch{fill:color-mix(in srgb,var(--red) 35%,var(--cell));opacity:.7}
-.mk-i{fill:var(--ink)}.mk-s{fill:var(--cell)}
-.mk-e,.mk-m{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
-.mk-sp{fill:var(--tint)}
-.mk-w{stroke:var(--tint-text);stroke-width:2.6;stroke-linecap:round}.mk-b{stroke:none}
+.mk-ring{fill:color-mix(in srgb,var(--tint) 22%,var(--cell));stroke:color-mix(in srgb,var(--tint) 75%,var(--ink));stroke-width:2}
+.mk-l{fill:none;stroke:var(--ink);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.mk-a{fill:var(--tint-text);font-family:Georgia,"Times New Roman",serif;font-weight:700;text-anchor:middle}
 .mk-happy{animation:mkhop 2.4s ease-in-out 1}
 @keyframes mkhop{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}60%{transform:translateY(0)}}
 @media (prefers-reduced-motion:reduce){.mk-happy{animation:none}}
@@ -3578,7 +3574,7 @@ Object.assign(ORTHO_R,{
 });
 const PR_WK={
  // уроки механик (с 13.11.2026 причастный оборот — урок 3): общий список в mech.js — по умолчанию прежняя нумерация, здесь — нынешняя
- mech:{hlw:[1,2],hls:[1,3],cm:[3],sx:[1,6,3],bw:[4],mp:[4,5],gr:[2],pr:[4],mx:[2],gw:[5],fo:[5],gs:[],gt:[],tx:[],nw:[7]},
+ mech:{hlw:[1,2],hls:[1,3],cm:[3],sx:[1,6,3],bw:[4],mp:[4,5],gr:[2],pr:[4],mx:[2],gw:[5],fo:[5],gs:[],gt:[],tx:[5],nw:[7]},
  wl:{ob:3,kr:6,suf:4,gl:5,ne:7},
  foQ:'Нажать на гласную, которую нужно проверять по правилу урока 5: в суффиксе причастия или перед ним.',
  // Слова и предложения — в общем корпусе (src/data/corpus): механики берут их оттуда с учётом уровня.
@@ -84382,7 +84378,7 @@ const MECH={
    why:bad.length?`Ошибок: ${bad.length} из ${t.gaps.length}.`:''}}},
  // ── Текст с пропусками: связный отрывок классики из общего корпуса (CORPUS_T), все орфограммы уроков
  tx:{t:'Текст с пропусками',l:[],d:'Прочитать отрывок писателя и вставить пропущенное во все слова.',
-  gen(c,les){const P=txPool(c,les),key=T=>T.a+'|'+T.w;let fresh=P.filter(T=>!TX_USED.has(key(T)));if(!fresh.length){TX_USED.clear();fresh=P}
+  gen(c,les){const P=txPool(c,les),key=T=>T.a+'|'+T.w+'|'+T.ss[0].map(x=>x.t).join(' ');let fresh=P.filter(T=>!TX_USED.has(key(T)));if(!fresh.length){TX_USED.clear();fresh=P}
    const T=pick1(fresh),gaps=[];TX_USED.add(key(T));
    T.ss.forEach((u,si)=>u.forEach((x,ui)=>{if(txGap(c,x,les))gaps.push({si,ui,g:x.or.g,a:x.or.a,o:orthOpts(x.or),r:x.or.r[0]})}));
    return mFinal({k:'m',m:'tx',l:Math.max(...gaps.map(g=>ORTHO_R[g.r].l)),q:'Прочитать отрывок. Вставить пропущенные буквы во все слова.',src:`${T.a}, «${T.w}»`,gl:T.g||'',ss:T.ss.map(u=>u.map(x=>({t:x.t,pu:x.pu}))),gaps,sel:{}})},
@@ -84410,7 +84406,7 @@ function orthPool(c,les){const out=[];corpusSents(c.id,{has:u=>u.some(x=>x.or)})
 // ловушки «почему?»: сначала правила уже пройденных уроков темы, затем остальные
 function orthTraps(topic,valid,l,n=3){const ks=Object.keys(ORTHO_R).filter(k=>ORTHO_R[k].topic===topic&&!valid.includes(k));
  const a=shuffle(ks.filter(k=>ORTHO_R[k].l<=l)),b=shuffle(ks.filter(k=>ORTHO_R[k].l>l));return [...a,...b].slice(0,n)}
-const orthOpts=o=>o.a==='н'||o.a==='нн'?['н','нн']:[o.a];
+const orthOpts=o=>{const R=ORTHO_R[o.r[0]];return R&&R.tw&&R.tw[o.a]?R.tw[o.a]:o.a==='н'||o.a==='нн'?['н','нн']:[o.a]};
 // слово единицы с пропуском на месте орфограммы
 function gapWord(text,g,a,v,res,after=''){const ws=text.split(' '),full=g.replace('_',a).toLowerCase(),wi=ws.findIndex(w=>w.toLowerCase()===full);if(wi<0)return esc(text)+after;
  const w=ws[wi],p=g.indexOf('_'),cl=res?(v===a?'ok':'bad'):'';ws[wi]=`<span class="gtw">${esc(w.slice(0,p))}<span class="slot ${cl}">${v==null?'…':esc(v)}</span>${esc(w.slice(p+a.length))}${after}</span>`;
@@ -90164,21 +90160,26 @@ function contHTML(){
  <span class="hmcta">${CONT_GO[tab]}${HI.chev}</span></button>`;
 }
 // ---------- серия «дни подряд» и маскот ----------
-// Маскот — простой SVG-человечек-буква «Ё» (две точки сверху — «ушки») на токенах темы; состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
+// Маскот «Ёшка» — по образцу Мелеты (Melete): лицо из тонких линий в круге, но каждая черта — буква русского языка:
+// брови — «п» (арка), глаза — «о» (кольца) или «п» (закрытые/радостные), нос — мягкий знак «ь», рот — «п», перевёрнутая, или «о»;
+// украшения — «Ё» (искры при радости), «з з» (дремота), «?» (ждёт). Цвет — currentColor и токены темы: светлая и тёмная.
+// Состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
+const MKP=d=>`<path class="mk-l" d="${d}"/>`;
+const MK_BROW=(y,l=0)=>MKP(`M${27+l} ${y+5}v-1.5q0-3.5 3.5-3.5h7q3.5 0 3.5 3.5v1.5`)+MKP(`M${57+l} ${y+5}v-1.5q0-3.5 3.5-3.5h7q3.5 0 3.5 3.5v1.5`);
+const MK_EYE_O=(dx=0)=>`<ellipse class="mk-l" cx="${37+dx}" cy="47" rx="3.6" ry="4.6"/><ellipse class="mk-l" cx="${64+dx}" cy="47" rx="3.6" ry="4.6"/>`;
+const MK_EYE_UP=MKP('M31 50v-1.5q0-4 4.5-4t4.5 4v1.5')+MKP('M58 50v-1.5q0-4 4.5-4t4.5 4v1.5');   // п — радость
+const MK_EYE_DN=MKP('M31 45v1.5q0 4 4.5 4t4.5-4v-1.5')+MKP('M58 45v1.5q0 4 4.5 4t4.5-4v-1.5');   // п вверх ногами — закрыты
+const MK_NOSE=MKP('M47 52v14M47 59h4q5 0 5 3.5t-5 3.5h-4');                                       // ь
+const MK_MOUTH_BIG=MKP('M37 74v2q0 8 13 8t13-8v-2');
+const MK_MOUTH_SM=MKP('M42 78v1q0 4 8 4t8-4v-1');
+const MK_MOUTH_O='<ellipse class="mk-l" cx="50" cy="79" rx="3.4" ry="4.4"/>';
 function mascotHTML(st){
- const eyes=st==='happy'?'<path class="mk-e" d="M33 41q4-6 8 0M59 41q4-6 8 0" fill="none"/>'
-  :st==='nudge'?'<circle class="mk-i" cx="37" cy="41" r="4"/><circle class="mk-i" cx="63" cy="41" r="4"/><circle class="mk-s" cx="38.5" cy="39.5" r="1.3"/><circle class="mk-s" cx="64.5" cy="39.5" r="1.3"/>'
-  :'<path class="mk-e" d="M33 42q4 4 8 0M59 42q4 4 8 0" fill="none"/>';
- const mouth=st==='happy'?'<path class="mk-m" d="M44 52q6 6 12 0" fill="none"/>':st==='nudge'?'<path class="mk-m" d="M46 53q4 3 8 0" fill="none"/>':'<path class="mk-m" d="M46 54h8" fill="none"/>';
- const extra=st==='happy'?'<path class="mk-sp" d="M84 18l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM14 28l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5L9 33l3.5-1.5z"/>'
-  :st==='nudge'?'<path class="mk-w" d="M88 52q6-4 6-12" fill="none"/>':'';
- return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="72" height="72" role="img" aria-label="${st==='happy'?'Ёшка радуется':st==='nudge'?'Ёшка ждёт':'Ёшка спокоен'}">
- <ellipse class="mk-sh" cx="50" cy="92" rx="26" ry="4"/>
- <circle class="mk-ear" cx="35" cy="13" r="6"/><circle class="mk-ear" cx="65" cy="13" r="6"/>
- <path class="mk-body" d="M50 20c-20 0-30 14-30 34 0 20 12 34 30 34s30-14 30-34c0-20-10-34-30-34z"/>
- <circle class="mk-ch" cx="29" cy="50" r="4"/><circle class="mk-ch" cx="71" cy="50" r="4"/>
- ${eyes}
- ${mouth}${extra}</svg>`;
+ const T=(x,y,ch,sz)=>`<text class="mk-a" x="${x}" y="${y}" font-size="${sz}">${ch}</text>`;
+ const f=st==='happy'?MK_BROW(29)+MK_EYE_UP+MK_NOSE+MK_MOUTH_BIG+T(82,26,'Ё',16)+T(17,32,'ё',10)
+  :st==='nudge'?MK_BROW(33)+MK_EYE_O(4)+MK_NOSE+MK_MOUTH_O+T(80,28,'?',20)
+  :MK_BROW(34)+MK_EYE_DN+MK_NOSE+MK_MOUTH_SM+T(76,30,'з',15)+T(86,20,'з',10);
+ return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="76" height="76" role="img" aria-label="${st==='happy'?'Ёшка радуется':st==='nudge'?'Ёшка ждёт':'Ёшка спокоен'}">
+ <circle class="mk-ring" cx="50" cy="50" r="46"/>${f}</svg>`;
 }
 const dayWord=n=>plural(n,'день','дня','дней');
 function streakHTML(me){

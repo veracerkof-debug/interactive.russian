@@ -62,6 +62,7 @@ function tRight(B){
 }
 function tFinish(){
  if(TS.step){stepFinish();return}
+ if(TS.opc){opcFinish();return}
  const c=CHAPTERS[TS.ch],sc=TS.qs.map((B,i)=>tScore(B,TS.ans[i])),sum=sc.reduce((x,y)=>x+y,0),p=sum/TS.qs.length,g=tGrade(p);
  const was=chTestsDone(c);
  S.tests=S.tests||{};const k=tKey(c,TS.key),r=S.tests[k]||{best:0,tries:0};
@@ -74,6 +75,7 @@ function tFinish(){
 
 function testsHTML(){
  if(route.v==='step')return stepTestsHTML();
+ if(route.v==='opc')return opcTestsHTML();
  const c=CC();
  if(TS&&TS.ch===c.id&&TSV==='run')return `<div id="tests" class="bktext">${TS.res?tResHTML(c):tRunHTML(c)}</div>`;
  const paused=TS&&TS.ch===c.id&&!TS.res?`<div class="tsrow tspause"><div class="tsinfo"><b>Начатый тест: ${TS.title.replace('Тест по уроку','урок')}</b><span>Отвечено ${TS.ans.filter((a,i)=>tAnswered(TS.qs[i],a)).length} из ${TS.qs.length}</span></div><button class="bkldone" data-tsgo="${TS.key}" data-tscont>Продолжить</button></div>`:'';
@@ -107,7 +109,7 @@ function tResHTML(c){
  ${wrong.length?`<h3>Разбор ошибок</h3>${wrong.map(([B,i])=>`<div class="tsm"><div class="q">${tGap(B.text)}${B.w?` <b>${tGap(B.w)}</b>`:''}</div>
   <div class="tsa"><span class="tsn">Ответ: ${tShowAns(B,TS.ans[i])}</span><span class="tsy">Верно: ${tRight(B)}</span></div>${B.why?`<div class="why">${esc(B.why)}</div>`:''}
   <button class="linkbtn" data-ojump="${(B.ch?CHAPTERS[B.ch]:c).lessons[B.l-1].id}">Повторить ${B.ch?`«${chById(B.ch).t}», урок`:'урок'} ${B.l} ›</button></div>`).join('')}`:'<p class="note">Ошибок нет.</p>'}
- <div class="tsnav"><button class="ghost" data-tslist>К списку тестов</button>${TS.step?'<button class="bkldone" data-stgo>Пройти ещё раз</button>':`<button class="bkldone" data-tsgo="${TS.key}">Пройти ещё раз</button>`}</div>`;
+ <div class="tsnav"><button class="ghost" data-tslist>К списку тестов</button>${TS.step?'<button class="bkldone" data-stgo>Пройти ещё раз</button>':TS.opc?'<button class="bkldone" data-opcgo>Пройти ещё раз</button>':`<button class="bkldone" data-tsgo="${TS.key}">Пройти ещё раз</button>`}</div>`;
 }
 function tsRe(){const el=document.getElementById('tests');if(!el){render();return}el.outerHTML=testsHTML();termsIn(document.getElementById('tests'));
  const t=document.getElementById('tests');if(t&&t.getBoundingClientRect().top<0)t.scrollIntoView({block:'start'});const inp=document.querySelector('[data-tsform] input');if(inp&&matchMedia('(hover:hover)').matches)inp.focus()}

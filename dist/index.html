@@ -233,6 +233,10 @@ details.bkhelp .body{padding:0 14px 12px;display:flex;flex-direction:column;gap:
 
 
 .chhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modes{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex:0 0 auto}
+.easy.adv[aria-pressed="true"]{border-color:var(--tint-text,var(--T));color:var(--tint-text,var(--T))}
+.advbox{background:color-mix(in srgb,var(--tint) 9%,var(--cell));border:1px solid color-mix(in srgb,var(--tint) 35%,var(--sep));margin:10px 0}
+.advbox>.h{color:var(--tint-text)}
 .easy{flex:0 0 auto;display:flex;align-items:center;gap:8px;border:1px solid var(--sep);background:var(--cell);border-radius:20px;min-height:40px;padding:0 12px 0 8px;font-weight:600;font-size:14px;margin-top:4px}
 .easy .sw{width:34px;height:20px;border-radius:10px;background:var(--fill2);position:relative;transition:background .15s}
 .easy .sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:8px;background:var(--cell);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}
@@ -1011,6 +1015,8 @@ const TEACHER=false;
 // ---------- хранилище ----------
 const KEY='rus-uchebnik-v1';
 let S={done:{},cards:{},view:'book'};
+// Режим «Углублённо» (решение владельца 18.11.2026): src/chapters/<id>/adv.js кладёт сюда {theory:{<id урока>:html}, classic:[…], bank:[…], tests:[…]}
+const CHAPTERS_ADV={};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const $=s=>document.querySelector(s);
@@ -84065,11 +84071,11 @@ Object.assign(LABS,{pbstart:pbStepHTML('pbstart'),pbname:pbStepHTML('pbname'),pb
 const TEST_PASS=3,TEST_LEN=6,FINAL_LEN=12;
 let TS=null; // идущий тест: {ch,key,title,qs,i,ans,t0,res}
 let TSV='list'; // что показывать во вкладке «Тесты»: 'run' — идущий тест, 'list' — список (начатый тест не теряется: «Продолжить»)
-const tKey=(c,k)=>c.id+':'+k;
+const tKey=(c,k)=>c.id+':'+k+(c.advTests?'~a':'');
 const tRes=(c,k)=>(S.tests||{})[tKey(c,k)];
 const tPassed=(c,k)=>{const r=tRes(c,k);return !!(r&&r.best>=TEST_PASS)};
 const tAll=c=>c.tests?[...c.lessons.map((_,i)=>i+1),'final']:[];
-const chTestsDone=c=>!!c.tests&&tAll(c).every(k=>tPassed(c,k));
+const chTestsDone=c=>{if(!c.tests)return false;const sv=c.advTests;c.advTests=false;const ok=tAll(c).every(k=>tPassed(c,k));c.advTests=sv;return ok};
 const tGrade=p=>p>=.9?5:p>=.75?4:p>=.5?3:2;
 const pick1=a=>a[Math.floor(Math.random()*a.length)];
 const tNorm=s=>String(s).toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' ').trim();
@@ -90572,6 +90578,31 @@ document.addEventListener('click',e=>{
 let PR_OPEN=null;
 window.addEventListener('beforeprint',()=>{PR_OPEN=[...document.querySelectorAll('details')].filter(d=>!d.open);PR_OPEN.forEach(d=>d.open=true)});
 window.addEventListener('afterprint',()=>{if(PR_OPEN)PR_OPEN.forEach(d=>d.open=false);PR_OPEN=null});
+// ---------- режим «Углублённо» (решение владельца 18.11.2026) ----------
+// Третий режим рядом с «Проще»; режимы взаимоисключающие (S.easy / S.adv). Материал главы — в src/chapters/<id>/adv.js:
+// CHAPTERS_ADV.<id>={theory:{<id урока>:html}, classic:[{n:201+,l,st:4–5,task,body,key}], bank:[как в bank.js], tests:[как в tests.js]}.
+// Режим подменяет данные главы на месте (c.classic, c.bank, c.tests), поэтому все экраны, статистика и счётчики работают без правок:
+//  · упражнения в тетрадь — готовые ★4–5 + новые из adv.js (номера n ≥ 201, постоянные);
+//  · тренажёр — банк adv.js (если пуст — обычный); тесты — слоты adv.js (если пусты — обычные), результаты хранятся отдельно (ключ с «~a»);
+//  · теория — основной текст + блок «Углублённо» (adv.theory) + «Тонкости» раскрыты.
+// Главы без adv.js в этом режиме не меняются (плашка «готовится»).
+const advHas=id=>!!CHAPTERS_ADV[id];
+function advApply(){
+ for(const id in CHAPTERS){
+  const c=CHAPTERS[id],A=CHAPTERS_ADV[id];if(!A)continue;
+  if(!c._b)c._b={classic:c.classic,bank:c.bank,tests:c.tests};
+  const b=c._b;
+  if(S.adv){
+   c.classic=[...(b.classic||[]).filter(e=>e.st>=4),...(A.classic||[])];
+   c.bank=(A.bank&&A.bank.length)?A.bank:b.bank;
+   c.tests=(A.tests&&A.tests.length)?A.tests:b.tests;
+   c.advTests=!!(A.tests&&A.tests.length);
+  }else{c.classic=b.classic;c.bank=b.bank;c.tests=b.tests;c.advTests=false}
+ }
+}
+function advToggle(){S.adv=!S.adv;if(S.adv)S.easy=false;save();advApply()}
+function advTheory(ch,l){const A=CHAPTERS_ADV[ch.id];return S.adv&&A&&A.theory&&A.theory[l.id]?`<div class="bins advbox"><div class="h">Углублённо</div>${A.theory[l.id]}</div>`:''}
+advApply();
 // ---------- экраны ----------
 let route={v:'home'};
 // История и «назад» (браузер, Android). Вкладка главы и урок — в адресе: #ch-<id>, #ch-<id>/<вкладка>, #ch-<id>/<вкладка>/<урок>;
@@ -90677,7 +90708,8 @@ function chapterHTML(id){
  const prev=ALLCH[idx-1],next=ALLCH[idx+1];
  let h=`<div class="bkhbar"><div class="in"><button class="back" data-home>‹ Оглавление</button><span class="tools"><span class="where">${meta.part.t} · ${meta.part.ch.indexOf(meta)+1} из ${meta.part.ch.length}</span>${ch?`<button class="ibtn" data-outline="${id}" aria-label="Содержание главы"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Содержание</button>`:''}</span></div></div><div class="wrap${ch?' chwide':''}">`;
  if(ch)h+=`<div class="chgrid">${chSide(id)}<div class="chmain">`;
- h+=`<header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div class="kick">Глава ${meta.part.n}.${meta.part.ch.indexOf(meta)+1} · ${stepLabel(id)}${ch&&chTestsDone(ch)?' · <span class="chok">✓ глава завершена</span>':''}</div><h2>${meta.t}</h2><div class="sub">${ch?ch.s:meta.s}</div></div>${ch?`<button class="easy" data-easy aria-pressed="${!!S.easy}"><span class="sw"><i></i></span>Проще</button>`:''}</header>`;
+ h+=`<header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div class="kick">Глава ${meta.part.n}.${meta.part.ch.indexOf(meta)+1} · ${stepLabel(id)}${ch&&chTestsDone(ch)?' · <span class="chok">✓ глава завершена</span>':''}</div><h2>${meta.t}</h2><div class="sub">${ch?ch.s:meta.s}</div></div>${ch?`<div class="modes"><button class="easy" data-easy aria-pressed="${!!S.easy}"><span class="sw"><i></i></span>Проще</button><button class="easy adv" data-adv aria-pressed="${!!S.adv}"><span class="sw"><i></i></span>Углублённо</button></div>`:''}</header>`;
+ if(ch&&S.adv&&!advHas(id))h+=`<div class="bins btip"><div class="h">Углублённо</div><p>Углублённый материал для этой главы готовится. Пока здесь обычный текст и задания.</p></div>`;
  if(ch)h+=needHTML(id)||opcBtnHTML(id);
  if(!ch){
   h+=`<div class="bins btip"><div class="h">Глава готовится</div><p>В образце готова одна глава — «Н и НН». На ней показано, как будут устроены все остальные: уроки, схема, упражнения, тонкости и карточки.</p><div><button class="linkbtn" data-ch="nn">Открыть «Н и НН» ›</button></div></div>`;
@@ -90693,6 +90725,7 @@ function chapterHTML(id){
   ch.lessons.forEach((l,i)=>{
    h+=`<section class="bkles" id="${l.id}"><div class="bklh"><span class="kick">Урок ${i+1}</span><span class="t">${S.done[l.id]?'✓ ':''}${l.t}</span></div>`;
    h+=h4ids(termify(S.easy&&l.lite?l.lite:l.h),l.id).replace('{{table}}',ch.table||'').replace(/\{\{lab:(\w+)\}\}/g,(m,id)=>labHTML(id));
+   h+=termify(advTheory(ch,l));
    const nb=(ch.bank||[]).filter(b=>b.l===i+1).length, cl=(ch.classic||[]).filter(e=>e.l===i+1);
    h+=`<div class="bklex"><div class="top"><b>Практика по уроку</b></div>
    <div class="prac">${nb?`<button class="pbtn" data-trles="${i+1}"><b>Тренажёр</b><span>${nb} заданий: по одному, столбики, найти ошибку</span></button>`:''}
@@ -90700,7 +90733,7 @@ function chapterHTML(id){
    ${ch.tests?(()=>{const r=tRes(ch,i+1),ok=tPassed(ch,i+1);return `<button class="pbtn ${ok?'tsp':''}" data-tsgo="${i+1}"><b>${ok?'✓ Тест сдан':'Тест'}</b><span>${r?`Лучшая оценка ${r.best} · пройти ещё раз`:`${Math.min(TEST_LEN,ch.tests.filter(s=>s.l===i+1).length)} вопросов без подсказок`}</span></button>`})():''}</div>
    <details class="bkhelp"><summary>Проще</summary><div class="body"><p>${l.easy}</p></div></details>
    <details class="bkhelp fix"><summary>Если не получается</summary><div class="body"><p>${l.fix}</p></div></details>
-   ${l.deep&&!S.easy?`<details class="bkhelp deep"><summary>Тонкости</summary><div class="body">${l.deep}</div></details>`:''}${S.easy?'<div class="bkhint">Полное объяснение со всеми исключениями — если выключить «Проще» вверху главы.</div>':''}
+   ${l.deep&&!S.easy?`<details class="bkhelp deep"${S.adv?' open':''}><summary>Тонкости</summary><div class="body">${l.deep}</div></details>`:''}${S.easy?'<div class="bkhint">Полное объяснение со всеми исключениями — если выключить «Проще» вверху главы.</div>':''}
    <button class="bkldone ${S.done[l.id]?'is':''}" data-done="${l.id}">${S.done[l.id]?'✓ Урок пройден':'Урок пройден'}</button></div></section>`;
   });
   h+=`</article>`;}
@@ -90938,7 +90971,8 @@ document.addEventListener('click',e=>{
  if(d.tw!==undefined){treeWord(+d.tw);relab('tree');return}
  if(d.to){treeGo(+d.k,d.to);relab('tree');return}
  if('treereset' in d){tst.nodes=['start'];tst.word=null;relab('tree');return}
- if('easy' in d){S.easy=!S.easy;save();const y=window.scrollY;render();window.scrollTo(0,y);return}
+ if('adv' in d){advToggle();const y=window.scrollY;render();window.scrollTo(0,y);return}
+ if('easy' in d){S.easy=!S.easy;if(S.easy&&S.adv){S.adv=false;advApply()}save();const y=window.scrollY;render();window.scrollTo(0,y);return}
  if(d.parse!==undefined){pSel=+d.parse;relab('parse');return}
  if(d.matrix){xSel=d.matrix;relab('matrix');return}
  if(d.build){bSel=d.build;relab('build');return}

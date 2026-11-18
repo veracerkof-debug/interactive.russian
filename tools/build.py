@@ -341,12 +341,15 @@ JS = [
     'src/js/core/home.js',              # главная (#home) и кабинет «Мои результаты» (#me)
     'src/js/core/steps.js',             # маршрут: ступени, «Следующая по маршруту», плашка опор, «Повторение ступени»
     'src/js/core/printhook.js',         # печать из приложения: раскрыть все блоки перед печатью
+    'src/js/core/advmode.js',           # режим «Углублённо»: подмена данных главы, блок теории (после всех глав и их adv.js)
     'src/js/core/screens.js',           # экраны, маршруты, обработчики
 ]
 # главы, которые ещё проходят проверки (PRINCIPLES §8, §9.3): в сборку не входят, пока не пройдут проверку и исправление;
 # так законченная тема уходит на сайт сразу, а незаконченная — не раньше времени
 DRAFT = set()
 JS = [p for p in JS if not (p.startswith('src/chapters/') and p.split('/')[2] in DRAFT)]
+# углублённый материал главы (режим «Углублённо»): src/chapters/<id>/adv.js подключается сразу после index.js, если файл есть
+JS = [x for p in JS for x in ([p, p[:-len('index.js')] + 'adv.js'] if p.startswith('src/chapters/') and p.endswith('/index.js') and os.path.exists(os.path.join(ROOT, p[:-len('index.js')] + 'adv.js')) else [p])]
 def read(p):
     with open(os.path.join(ROOT, p), encoding='utf-8') as f: return f.read()
 # ключи упражнений в тетрадь: поле key:'…' в src/chapters/*/classic.js
@@ -355,7 +358,7 @@ def js_for(teacher, files=None):
     out = ['const TEACHER=%s;\n' % ('true' if teacher else 'false')]
     for p in (files or JS):
         t = read(p)
-        if not teacher and p.endswith('/classic.js') and p.startswith('src/chapters/'):
+        if not teacher and (p.endswith('/classic.js') or p.endswith('/adv.js')) and p.startswith('src/chapters/'):
             t, n = KEY_RE.subn('', t)
             t = re.sub(r",(\s*)\}", r"\1}", t)        # хвостовая запятая перед } после вырезанного key
             assert "key:" not in t, p + ': ключ не вырезан'

@@ -8,7 +8,7 @@ if(!id){console.log('Запуск: node tools/check-chapter.js <id главы>')
 const dir=path.join(ROOT,'src/chapters',id);
 if(!fs.existsSync(dir)){console.log('Нет папки '+dir);process.exit(2)}
 const ERR=[],WARN=[];let B=[],X=[],T=[],NL=0,box=null;const err=m=>ERR.push(m),warn=m=>WARN.push(m);
-const ORDER=['lessons','bank','classic','labs','tests','workshop','index'];
+const ORDER=['lessons','bank','classic','labs','tests','workshop','index','adv'];
 const files=ORDER.map(f=>path.join(dir,f+'.js')).filter(f=>fs.existsSync(f));
 for(const f of ['lessons'])if(!fs.existsSync(path.join(dir,f+'.js')))err(`нет файла ${f}.js`);
 
@@ -29,7 +29,7 @@ vm.createContext(box);
 const PRE=['src/js/core/store.js','src/data/corpus/levels.js','src/data/corpus/orthograms.js','src/data/corpus/sentences.js','src/data/corpus/words.js','src/data/corpus/texts.js'].map(f=>path.join(ROOT,f)).filter(f=>fs.existsSync(f));
 const SRC=[...PRE,...files].map(f=>fs.readFileSync(f,'utf8')).join('\n;\n');
 const pre=(/^const CHAPTERS\b/m.test(SRC)?'':'var CHAPTERS={};')+(/^const LABS\b/m.test(SRC)?'':'var LABS={};');
-try{vm.runInContext(pre+SRC+'\n;globalThis.__C=CHAPTERS;globalThis.__L=LABS;',box,{filename:id})}catch(e){err('глава не загружается: '+e.message);report();process.exit(1)}
+try{vm.runInContext(pre+SRC+'\n;globalThis.__C=CHAPTERS;globalThis.__L=LABS;globalThis.__A=(typeof CHAPTERS_ADV!=="undefined"?CHAPTERS_ADV:{});',box,{filename:id})}catch(e){err('глава не загружается: '+e.message);report();process.exit(1)}
 const C=box.__C[id];if(!C){err(`глава не зарегистрирована: нужно CHAPTERS.${id}=…`);report();process.exit(1)}
 const L=C.lessons||[];NL=L.length;
 const strip=s=>String(s||'').replace(/<[^>]+>/g,' ').replace(/\{\{lab:\w+\}\}/g,' ').replace(/\s+/g,' ').trim();
@@ -158,6 +158,41 @@ let INFO=[];
 try{const K=require('./lib/course.js').load(),g=require('./lib/graph.js').graphCheck(K,id,C);g.errs.forEach(e=>err('последовательность: '+e));g.warns.forEach(e=>warn('последовательность: '+e));INFO=g.info}
 catch(e){err('проверка последовательности не выполнена: '+e.message)}
 
+// 13. режим «Углублённо» (docs/plans/uglublenno.md): src/chapters/<id>/adv.js, если он есть
+(()=>{const A=(box.__A||{})[id];if(!fs.existsSync(path.join(dir,'adv.js')))return;
+ if(!A){err('adv.js не регистрирует CHAPTERS_ADV.'+id);return}
+ const lid=new Set((C.lessons||[]).map(l=>l.id)),nl=(C.lessons||[]).length,txt=h=>String(h).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+ // теория: у каждого урока блок 1500+ знаков
+ const th=A.theory||{};for(const k of Object.keys(th))if(!lid.has(k))err(`углублённо, теория: нет урока ${k}`);
+ for(const l of C.lessons||[]){const t=th[l.id];if(!t){err(`углублённо, теория: нет блока для урока ${l.id}`);continue}const n=txt(t).length;if(n<1200)err(`углублённо, теория урока ${l.id}: ${n} знаков — меньше 1200`);else if(n<1500)warn(`углублённо, теория урока ${l.id}: ${n} знаков — норма от 1500`);if(/ты |тебе|тебя/i.test(txt(t)))warn(`углублённо, теория урока ${l.id}: обращение «ты»`);if(/ОГЭ|ЕГЭ|сертификат/i.test(txt(t)))err(`углублённо, теория урока ${l.id}: названия экзаменов (PRINCIPLES §5.10)`)}
+ // упражнения
+ const cl=A.classic||[],baseN=new Set((C.classic||[]).map(e=>e.n)),seen=new Set();
+ if(cl.length<14)err(`углублённо, упражнения: ${cl.length} — норма не меньше 14`);
+ const per={};for(const e of cl){per[e.l]=(per[e.l]||0)+1;
+  if(!Number.isInteger(e.n)||e.n<201)err(`углублённо, упражнение ${e.n}: номер n должен быть целым ≥ 201`);
+  if(seen.has(e.n)||baseN.has(e.n))err(`углублённо, упражнение ${e.n}: номер уже занят`);seen.add(e.n);
+  if(!(e.l>=1&&e.l<=nl))err(`углублённо, упражнение ${e.n}: нет урока ${e.l}`);
+  if(e.st!==4&&e.st!==5)err(`углублённо, упражнение ${e.n}: st должен быть 4 или 5`);
+  for(const f of ['task','body','key'])if(typeof e[f]!=='string'||e[f].trim().length<3)err(`углублённо, упражнение ${e.n}: нет поля ${f}`);
+  if(typeof e.body==='string'&&e.body.length<60)warn(`углублённо, упражнение ${e.n}: мало материала (${e.body.length} знаков)`);
+  if(Object.keys(e).pop()!=='key')err(`углублённо, упражнение ${e.n}: key должен быть последним полем`)}
+ for(let i=1;i<=nl;i++)if((per[i]||0)<2)err(`углублённо, упражнения: в уроке ${i} меньше 2`);
+ // тренажёр
+ const bk=A.bank||[],baseId=new Set((C.bank||[]).map(b=>b.id)),bseen=new Set(),bper={};
+ if(bk.length<18)err(`углублённо, тренажёр: ${bk.length} заданий — норма не меньше 18`);
+ for(const b of bk){bper[b.l]=(bper[b.l]||0)+1;
+  if(!b.id||bseen.has(b.id)||baseId.has(b.id))err(`углублённо, тренажёр ${b.id}: id пуст или повторяется`);bseen.add(b.id);
+  if(!(b.l>=1&&b.l<=nl))err(`углублённо, тренажёр ${b.id}: нет урока ${b.l}`);
+  for(const f of ['w','a','why','q'])if(typeof b[f]!=='string'||!b[f].trim())err(`углублённо, тренажёр ${b.id}: нет поля ${f}`);
+  if(!Array.isArray(b.opts)||b.opts.length<2||new Set(b.opts).size!==b.opts.length)err(`углублённо, тренажёр ${b.id}: варианты пусты или повторяются`);
+  else if(!b.opts.includes(b.a))err(`углублённо, тренажёр ${b.id}: ответа нет среди вариантов`)}
+ for(let i=1;i<=nl;i++)if((bper[i]||0)<3)err(`углублённо, тренажёр: в уроке ${i} меньше 3 заданий`);
+ // тесты: форма слота — как в tests.js главы
+ const ts=A.tests||[],bt=C.tests||[],keys=new Set();bt.forEach(s=>Object.keys(s).forEach(k=>keys.add(k)));
+ const tper={};for(const t of ts){tper[t.l]=(tper[t.l]||0)+1;if(!(t.l>=1&&t.l<=nl))err(`углублённо, тесты: нет урока ${t.l}`);
+  for(const k of Object.keys(t))if(bt.length&&!keys.has(k))err(`углублённо, тесты: поле ${k} не встречается в tests.js главы`)}
+ for(let i=1;i<=nl;i++)if((tper[i]||0)<4)err(`углублённо, тесты: в уроке ${i} меньше 4 слотов`);
+ INFO.push(`углублённо: теория ${Object.keys(th).length} блоков, упражнений ${cl.length}, тренажёр ${bk.length}, слотов тестов ${ts.length}`)})();
 report();process.exit(ERR.length?1:0);
 function report(){
  console.log(`Глава ${id}: уроков ${NL||'?'}, схем ${Object.keys((box&&box.__L)||{}).length}, тренажёр ${B.length}, упражнений ${X.length}, слотов тестов ${T.length}`);

@@ -5,11 +5,11 @@
 const TEST_PASS=3,TEST_LEN=6,FINAL_LEN=12;
 let TS=null; // идущий тест: {ch,key,title,qs,i,ans,t0,res}
 let TSV='list'; // что показывать во вкладке «Тесты»: 'run' — идущий тест, 'list' — список (начатый тест не теряется: «Продолжить»)
-const tKey=(c,k)=>c.id+':'+k;
+const tKey=(c,k)=>c.id+':'+k+(c.advTests?'~a':'');
 const tRes=(c,k)=>(S.tests||{})[tKey(c,k)];
 const tPassed=(c,k)=>{const r=tRes(c,k);return !!(r&&r.best>=TEST_PASS)};
 const tAll=c=>c.tests?[...c.lessons.map((_,i)=>i+1),'final']:[];
-const chTestsDone=c=>!!c.tests&&tAll(c).every(k=>tPassed(c,k));
+const chTestsDone=c=>{if(!c.tests)return false;const sv=c.advTests;c.advTests=false;const ok=tAll(c).every(k=>tPassed(c,k));c.advTests=sv;return ok};
 const tGrade=p=>p>=.9?5:p>=.75?4:p>=.5?3:2;
 const pick1=a=>a[Math.floor(Math.random()*a.length)];
 const tNorm=s=>String(s).toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' ').trim();

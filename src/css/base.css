@@ -231,6 +231,7 @@ details.bkhelp .body{padding:0 14px 12px;display:flex;flex-direction:column;gap:
 
 .chhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .modes{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex:0 0 auto}
+@media(max-width:520px){.chhead{flex-direction:column;gap:8px}.modes{flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:8px}.modes .easy{margin-top:0}}
 .easy.adv[aria-pressed="true"]{border-color:var(--tint-text,var(--T));color:var(--tint-text,var(--T))}
 .advbox{background:color-mix(in srgb,var(--tint) 9%,var(--cell));border:1px solid color-mix(in srgb,var(--tint) 35%,var(--sep));margin:10px 0}
 .advbox>.h{color:var(--tint-text)}

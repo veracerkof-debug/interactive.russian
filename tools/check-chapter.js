@@ -191,7 +191,24 @@ catch(e){err('проверка последовательности не вып�
  const ts=A.tests||[],bt=C.tests||[],keys=new Set();bt.forEach(s=>Object.keys(s).forEach(k=>keys.add(k)));
  const tper={};for(const t of ts){tper[t.l]=(tper[t.l]||0)+1;if(!(t.l>=1&&t.l<=nl))err(`углублённо, тесты: нет урока ${t.l}`);
   for(const k of Object.keys(t))if(bt.length&&!keys.has(k))err(`углублённо, тесты: поле ${k} не встречается в tests.js главы`)}
- for(let i=1;i<=nl;i++)if((tper[i]||0)<4)err(`углублённо, тесты: в уроке ${i} меньше 4 слотов`);
+ for(let i=1;i<=nl;i++)if((tper[i]||0)<6)err(`углублённо, тесты: в уроке ${i} меньше 6 слотов (тест урока — TEST_LEN вопросов)`);
+ // тренажёр: верный вариант не должен быть самым длинным и не стоять первым слишком часто (ловушки — настоящие)
+ {const lng=bk.filter(b=>Array.isArray(b.opts)&&b.opts.length>2&&b.opts.every(o=>o===b.a||o.length<b.a.length)).length,first=bk.filter(b=>Array.isArray(b.opts)&&b.opts[0]===b.a).length;
+  if(bk.length&&lng/bk.length>.4)warn(`углублённо, тренажёр: верный вариант самый длинный в ${lng} из ${bk.length} заданий — выровнять длину вариантов`);
+  void first}
+ // повторы слов в материале adv.js (леммы; без теории)
+ try{const rep=JSON.parse(cp.execFileSync('python3',['-I',path.join(ROOT,'tools/povtory.py'),id,'--adv','--json'],{stdio:['ignore','pipe','pipe'],maxBuffer:1<<26}).toString());
+  const osn=new Set(rep.osn||[]),bad=Object.entries(rep.slova).filter(([w,v])=>osn.has(w)?v.length>10:v.length>rep.lim);
+  if(bad.length)warn(`углублённо, повторы слов в adv.js (по леммам; окружение — не больше ${rep.lim} мест, слово-основа — не больше 10; \`python3 tools/povtory.py ${id} 7 --adv\`): `+bad.slice(0,15).map(([w,v])=>w+' ×'+v.length).join(', '))}catch(e){warn('углублённо: повторы слов не проверены (нужны python3 и pymorphy3)')}
+ // дубли предложений: с другими файлами проекта и внутри adv.js
+ try{const nrm=t=>String(t).replace(/<[^>]*>/g,' ').toLowerCase().replace(/ё/g,'е').replace(/[^а-я ]+/g,' ').replace(/\s+/g,' ').trim();
+  const sents=h=>String(h).replace(/<br\s*\/?>/g,'. ').replace(/<[^>]*>/g,' ').split(/(?<=[.!?…»])\s+/).map(nrm).filter(x=>x.split(' ').length>=6);
+  const mine=[];cl.forEach(e=>mine.push(...sents(e.body)));bk.forEach(b=>mine.push(...sents(b.w)));
+  const cnt={};mine.forEach(x=>cnt[x]=(cnt[x]||0)+1);
+  const inner=Object.entries(cnt).filter(([x,n])=>n>2).length;if(inner)warn(`углублённо: ${inner} предложений встречаются в adv.js больше двух раз`);
+  const set=new Set(Object.keys(cnt));let outer=0;const own=path.join(dir,'adv.js');
+  for(const f of walk(path.join(ROOT,'src/chapters'))){if(f===own)continue;const t=nrm(fs.readFileSync(f,'utf8'));for(const x of set)if(t.includes(x)){outer++;set.delete(x)}}
+  if(outer)warn(`углублённо: ${outer} предложений adv.js уже есть в других файлах глав (дубли цитат: взять другие)`)}catch(e){warn('углублённо: дубли не проверены: '+e.message)}
  INFO.push(`углублённо: теория ${Object.keys(th).length} блоков, упражнений ${cl.length}, тренажёр ${bk.length}, слотов тестов ${ts.length}`)})();
 report();process.exit(ERR.length?1:0);
 function report(){

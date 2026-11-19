@@ -47,11 +47,12 @@ function trStart(items){
 function trSetupHTML(){
  trSync();const c=CC(),n=trPool().length,av=mAvail(c,TR.les);
  if(c.wk&&MECH[TR.mode]&&!av.includes(TR.mode))TR.mode='all';
+ const hasGap=trPool().some(gap);if((TR.mode==='cols'||TR.mode==='err')&&!hasGap)TR.mode='pick'; // банк без пропусков (например, режим «Углублённо»): «Столбики» и «Найти ошибку» не показываются
  const chip=(k,t)=>`<button class="chipc" data-trm="${k}" aria-pressed="${TR.mode===k}">${t}</button>`;
  const modes=c.wk?`<div class="tl">Вид задания</div><div class="chips">${chip('all','Все виды вперемешку')}</div>
   <div class="tl">Действия — как в тетради</div><div class="chips">${av.map(m=>chip(m,MECH[m].t)).join('')||'<span class="note">Для выбранных уроков нет.</span>'}</div>
-  <div class="tl">Выбор варианта</div><div class="chips">${['pick','cols','err'].map(k=>chip(k,TR_OLD[k])).join('')}</div>`
-  :`<div class="tl">Вид задания</div><div class="seg" role="radiogroup">${Object.entries(TR_OLD).map(m=>`<button role="radio" data-trm="${m[0]}" aria-pressed="${TR.mode===m[0]}">${m[1]}</button>`).join('')}</div>`;
+  <div class="tl">Выбор варианта</div><div class="chips">${['pick','cols','err'].filter(k=>k==='pick'||hasGap).map(k=>chip(k,TR_OLD[k])).join('')}</div>`
+  :`<div class="tl">Вид задания</div><div class="seg" role="radiogroup">${Object.entries(TR_OLD).filter(m=>!(m[0]==='cols'||m[0]==='err')||hasGap).map(m=>`<button role="radio" data-trm="${m[0]}" aria-pressed="${TR.mode===m[0]}">${m[1]}</button>`).join('')}</div>`;
  const mech=trIsMech(TR.mode),can=mech?av.length>0:n>0;
  return `<div class="blab"><div class="cap"><b>Тренажёр</b><span class="bkhint">${c.wk?`${mAvail(c,c.lessons.map((_,i)=>i+1)).length} видов действий · `:''}в банке ${c.bank.length} заданий</span></div>
  <div class="tl">Уроки</div><div class="chips">${c.lessons.map((l,i)=>`<button class="chipc" data-trl="${i+1}" aria-pressed="${TR.les.includes(i+1)}">${i+1}. ${c.lnames[i+1]}</button>`).join('')}</div>

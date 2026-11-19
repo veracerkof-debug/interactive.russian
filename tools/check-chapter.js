@@ -204,7 +204,7 @@ catch(e){err('проверка последовательности не вып�
   if(bad.length)warn(`углублённо, повторы слов в adv.js (по леммам; окружение — не больше ${rep.lim} мест, слово-основа — не больше 10; \`python3 tools/povtory.py ${id} 7 --adv\`): `+bad.slice(0,15).map(([w,v])=>w+' ×'+v.length).join(', '))}catch(e){warn('углублённо: повторы слов не проверены (нужны python3 и pymorphy3)')}
  // дубли предложений: с другими файлами проекта и внутри adv.js
  try{const nrm=t=>String(t).replace(/<[^>]*>/g,' ').toLowerCase().replace(/ё/g,'е').replace(/[^а-я ]+/g,' ').replace(/\s+/g,' ').trim();
-  const sents=h=>String(h).replace(/<br\s*\/?>/g,'. ').replace(/<[^>]*>/g,' ').split(/(?<=[.!?…»])\s+/).map(nrm).filter(x=>x.split(' ').length>=6);
+  const sents=h=>String(h).replace(/<br\s*\/?>/g,'. ').replace(/<[^>]*>/g,' ').replace(/\([^()]*«[^()]*\)/g,' ').split(/(?<=[.!?…»])\s+/).map(nrm).filter(x=>x.split(' ').length>=6);
   const mine=[];cl.forEach(e=>mine.push(...sents(e.body)));bk.forEach(b=>mine.push(...sents(b.w)));
   const cnt={};mine.forEach(x=>cnt[x]=(cnt[x]||0)+1);
   const inner=Object.entries(cnt).filter(([x,n])=>n>2).length;if(inner)warn(`углублённо: ${inner} предложений встречаются в adv.js больше двух раз`);

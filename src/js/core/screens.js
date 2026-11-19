@@ -103,7 +103,8 @@ function chapterHTML(id){
  const prev=ALLCH[idx-1],next=ALLCH[idx+1];
  let h=`<div class="bkhbar"><div class="in"><button class="back" data-home>‹ Оглавление</button><span class="tools"><span class="where">${meta.part.t} · ${meta.part.ch.indexOf(meta)+1} из ${meta.part.ch.length}</span>${ch?`<button class="ibtn" data-outline="${id}" aria-label="Содержание главы"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Содержание</button>`:''}</span></div></div><div class="wrap${ch?' chwide':''}">`;
  if(ch)h+=`<div class="chgrid">${chSide(id)}<div class="chmain">`;
- h+=`<header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div class="kick">Глава ${meta.part.n}.${meta.part.ch.indexOf(meta)+1} · ${stepLabel(id)}${ch&&chTestsDone(ch)?' · <span class="chok">✓ глава завершена</span>':''}</div><h2>${meta.t}</h2><div class="sub">${ch?ch.s:meta.s}</div></div>${ch?`<button class="easy" data-easy aria-pressed="${!!S.easy}"><span class="sw"><i></i></span>Проще</button>`:''}</header>`;
+ h+=`<header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div class="kick">Глава ${meta.part.n}.${meta.part.ch.indexOf(meta)+1} · ${stepLabel(id)}${ch&&chTestsDone(ch)?' · <span class="chok">✓ глава завершена</span>':''}</div><h2>${meta.t}</h2><div class="sub">${ch?ch.s:meta.s}</div></div>${ch?`<div class="modes"><button class="easy" data-easy aria-pressed="${!!S.easy}"><span class="sw"><i></i></span>Проще</button><button class="easy adv" data-adv aria-pressed="${!!S.adv}"><span class="sw"><i></i></span>Углублённо</button></div>`:''}</header>`;
+ if(ch&&S.adv&&!advHas(id))h+=`<div class="bins btip"><div class="h">Углублённо</div><p>Углублённый материал для этой главы готовится. Пока здесь обычный текст и задания.</p></div>`;
  if(ch)h+=needHTML(id)||opcBtnHTML(id);
  if(!ch){
   h+=`<div class="bins btip"><div class="h">Глава готовится</div><p>В образце готова одна глава — «Н и НН». На ней показано, как будут устроены все остальные: уроки, схема, упражнения, тонкости и карточки.</p><div><button class="linkbtn" data-ch="nn">Открыть «Н и НН» ›</button></div></div>`;
@@ -119,6 +120,7 @@ function chapterHTML(id){
   ch.lessons.forEach((l,i)=>{
    h+=`<section class="bkles" id="${l.id}"><div class="bklh"><span class="kick">Урок ${i+1}</span><span class="t">${S.done[l.id]?'✓ ':''}${l.t}</span></div>`;
    h+=h4ids(termify(S.easy&&l.lite?l.lite:l.h),l.id).replace('{{table}}',ch.table||'').replace(/\{\{lab:(\w+)\}\}/g,(m,id)=>labHTML(id));
+   h+=termify(advTheory(ch,l));
    const nb=(ch.bank||[]).filter(b=>b.l===i+1).length, cl=(ch.classic||[]).filter(e=>e.l===i+1);
    h+=`<div class="bklex"><div class="top"><b>Практика по уроку</b></div>
    <div class="prac">${nb?`<button class="pbtn" data-trles="${i+1}"><b>Тренажёр</b><span>${nb} заданий: по одному, столбики, найти ошибку</span></button>`:''}
@@ -126,7 +128,7 @@ function chapterHTML(id){
    ${ch.tests?(()=>{const r=tRes(ch,i+1),ok=tPassed(ch,i+1);return `<button class="pbtn ${ok?'tsp':''}" data-tsgo="${i+1}"><b>${ok?'✓ Тест сдан':'Тест'}</b><span>${r?`Лучшая оценка ${r.best} · пройти ещё раз`:`${Math.min(TEST_LEN,ch.tests.filter(s=>s.l===i+1).length)} вопросов без подсказок`}</span></button>`})():''}</div>
    <details class="bkhelp"><summary>Проще</summary><div class="body"><p>${l.easy}</p></div></details>
    <details class="bkhelp fix"><summary>Если не получается</summary><div class="body"><p>${l.fix}</p></div></details>
-   ${l.deep&&!S.easy?`<details class="bkhelp deep"><summary>Тонкости</summary><div class="body">${l.deep}</div></details>`:''}${S.easy?'<div class="bkhint">Полное объяснение со всеми исключениями — если выключить «Проще» вверху главы.</div>':''}
+   ${l.deep&&!S.easy?`<details class="bkhelp deep"${S.adv?' open':''}><summary>Тонкости</summary><div class="body">${l.deep}</div></details>`:''}${S.easy?'<div class="bkhint">Полное объяснение со всеми исключениями — если выключить «Проще» вверху главы.</div>':''}
    <button class="bkldone ${S.done[l.id]?'is':''}" data-done="${l.id}">${S.done[l.id]?'✓ Урок пройден':'Урок пройден'}</button></div></section>`;
   });
   h+=`</article>`;}
@@ -364,7 +366,8 @@ document.addEventListener('click',e=>{
  if(d.tw!==undefined){treeWord(+d.tw);relab('tree');return}
  if(d.to){treeGo(+d.k,d.to);relab('tree');return}
  if('treereset' in d){tst.nodes=['start'];tst.word=null;relab('tree');return}
- if('easy' in d){S.easy=!S.easy;save();const y=window.scrollY;render();window.scrollTo(0,y);return}
+ if('adv' in d){advToggle();const y=window.scrollY;render();window.scrollTo(0,y);return}
+ if('easy' in d){S.easy=!S.easy;if(S.easy&&S.adv){S.adv=false;advApply()}save();const y=window.scrollY;render();window.scrollTo(0,y);return}
  if(d.parse!==undefined){pSel=+d.parse;relab('parse');return}
  if(d.matrix){xSel=d.matrix;relab('matrix');return}
  if(d.build){bSel=d.build;relab('build');return}

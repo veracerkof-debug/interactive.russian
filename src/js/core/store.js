@@ -1,6 +1,8 @@
 // ---------- хранилище ----------
 const KEY='rus-uchebnik-v1';
 let S={done:{},cards:{},view:'book'};
+// Режим «Углублённо» (решение владельца 18.11.2026): src/chapters/<id>/adv.js кладёт сюда {theory:{<id урока>:html}, classic:[…], bank:[…], tests:[…]}
+const CHAPTERS_ADV={};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const $=s=>document.querySelector(s);

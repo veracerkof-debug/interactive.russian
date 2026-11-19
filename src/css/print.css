@@ -11,7 +11,7 @@
   body::before{display:none}
   *{box-shadow:none!important;text-shadow:none!important;animation:none!important;transition:none!important}
   /* интерфейс, который на бумаге бессмыслен */
-  .bkhbar,.chside,.seg,.bklnav,.fab,.bpn,.navside,.easy,.needbar,.toast,.sheet,.sheetbg,
+  .bkhbar,.chside,.seg,.bklnav,.fab,.bpn,.navside,.easy,.needbar,.modes,.toast,.sheet,.sheetbg,
   .bklex .top,.bklex .prac,.bkldone,.bkhint,.pill,.cllink,.clfind,.clnav,.cmleg,.clmap,.stend,.tools,
   .otl,.linkbtn,.pbtn,[data-clform]{display:none!important}
   .wrap,.wpage,.chmain,.chgrid{display:block!important;max-width:none!important;padding:0!important;margin:0!important}

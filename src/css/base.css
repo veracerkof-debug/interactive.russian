@@ -230,6 +230,11 @@ details.bkhelp .body{padding:0 14px 12px;display:flex;flex-direction:column;gap:
 
 
 .chhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modes{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex:0 0 auto}
+@media(max-width:520px){.chhead{flex-direction:column;gap:8px}.modes{flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:8px}.modes .easy{margin-top:0}}
+.easy.adv[aria-pressed="true"]{border-color:var(--tint-text,var(--T));color:var(--tint-text,var(--T))}
+.advbox{background:color-mix(in srgb,var(--tint) 9%,var(--cell));border:1px solid color-mix(in srgb,var(--tint) 35%,var(--sep));margin:10px 0}
+.advbox>.h{color:var(--tint-text)}
 .easy{flex:0 0 auto;display:flex;align-items:center;gap:8px;border:1px solid var(--sep);background:var(--cell);border-radius:20px;min-height:40px;padding:0 12px 0 8px;font-weight:600;font-size:14px;margin-top:4px}
 .easy .sw{width:34px;height:20px;border-radius:10px;background:var(--fill2);position:relative;transition:background .15s}
 .easy .sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:8px;background:var(--cell);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}

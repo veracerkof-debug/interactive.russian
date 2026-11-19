@@ -328,6 +328,24 @@ const ok=[],fail=[];const check=(c,msg)=>(c?ok:fail).push(msg);
   await q.evaluate(()=>localStorage.setItem('rus-uchebnik-v1',JSON.stringify({done:{pr1:true},cards:{},view:'book'})));
   await q.goto(U+'#toc');await q.reload();check(!!await q.$('.tstep')&&!!await q.$('.tparts'),'старое сохранение без S.steps и S.needx открывается');
   await ctx.close();}
+ // ---------- режим «Углублённо» (docs/plans/uglublenno.md): vtor — образец ----------
+ {const ctx=await b.newContext({viewport:{width:400,height:900}});const q=await ctx.newPage();q.on('pageerror',e=>errs.push('Углублённо: '+e.message));
+  await q.goto(U+'#ch-vtor');await q.waitForTimeout(200);
+  check(!!await q.$('[data-adv]'),'«Углублённо»: переключатель в шапке главы');
+  await q.click('[data-adv]');await q.waitForTimeout(150);
+  check((await q.$$('.advbox')).length>=6,'«Углублённо»: блок теории в каждом уроке');
+  await q.click('[data-easy]');await q.waitForTimeout(100);
+  check((await q.$$('.advbox')).length===0&&(await q.getAttribute('[data-adv]','aria-pressed'))==='false','«Углублённо»: «Проще» выключает режим');
+  await q.click('[data-adv]');await q.waitForTimeout(100);
+  await q.click('[data-tab="classic"]');await q.waitForTimeout(150);
+  check(!!await q.$('#cl201'),'«Углублённо»: упражнения от 201 в списке');
+  await q.click('[data-tab="train"]');await q.waitForTimeout(150);
+  check(!(await q.$('[data-trm="cols"]'))&&!(await q.$('[data-trm="err"]')),'«Углублённо»: без заданий с пропуском нет «Столбиков» и «Найти ошибку»');
+  await q.click('[data-tab="tests"]');await q.waitForTimeout(150);
+  check((await q.$$('#tests [data-tsgo]')).length>=6,'«Углублённо»: тесты по урокам открываются');
+  await q.click('[data-adv]');await q.waitForTimeout(100);
+  check((await q.$$('.advbox')).length===0&&!await q.$('#cl201'),'«Углублённо»: выключается обратно, обычные данные возвращаются');
+  await ctx.close();}
  errs.forEach(e=>fail.push('JS: '+e));
  ok.forEach(m=>console.log('  ✓ '+m));fail.forEach(m=>console.log('  ✗ '+m));
  console.log(fail.length?`Ошибок: ${fail.length}`:`Всё работает (${ok.length} проверок)`);

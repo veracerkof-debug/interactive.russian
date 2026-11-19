@@ -164,7 +164,7 @@ catch(e){err('проверка последовательности не вып�
  const lid=new Set((C.lessons||[]).map(l=>l.id)),nl=(C.lessons||[]).length,txt=h=>String(h).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
  // теория: у каждого урока блок 1500+ знаков
  const th=A.theory||{};for(const k of Object.keys(th))if(!lid.has(k))err(`углублённо, теория: нет урока ${k}`);
- for(const l of C.lessons||[]){const t=th[l.id];if(!t){err(`углублённо, теория: нет блока для урока ${l.id}`);continue}const n=txt(t).length;if(n<1200)err(`углублённо, теория урока ${l.id}: ${n} знаков — меньше 1200`);else if(n<1500)warn(`углублённо, теория урока ${l.id}: ${n} знаков — норма от 1500`);if(/ты |тебе|тебя/i.test(txt(t)))warn(`углублённо, теория урока ${l.id}: обращение «ты»`);if(/ОГЭ|ЕГЭ|сертификат/i.test(txt(t)))err(`углублённо, теория урока ${l.id}: названия экзаменов (PRINCIPLES §5.10)`)}
+ for(const l of C.lessons||[]){const t=th[l.id];if(!t){err(`углублённо, теория: нет блока для урока ${l.id}`);continue}const n=txt(t).length;if(n<1200)err(`углублённо, теория урока ${l.id}: ${n} знаков — меньше 1200`);else if(n<1500)warn(`углублённо, теория урока ${l.id}: ${n} знаков — норма от 1500`);if(/(^|[^а-яё])(ты|тебе|тебя|тобой)([^а-яё]|$)/i.test(txt(t)))warn(`углублённо, теория урока ${l.id}: обращение «ты»`);if(/ОГЭ|ЕГЭ|сертификат/i.test(txt(t)))err(`углублённо, теория урока ${l.id}: названия экзаменов (PRINCIPLES §5.10)`)}
  // упражнения
  const cl=A.classic||[],baseN=new Set((C.classic||[]).map(e=>e.n)),seen=new Set();
  if(cl.length<14)err(`углублённо, упражнения: ${cl.length} — норма не меньше 14`);

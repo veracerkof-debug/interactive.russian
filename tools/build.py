@@ -348,8 +348,11 @@ JS = [
 # так законченная тема уходит на сайт сразу, а незаконченная — не раньше времени
 DRAFT = set()
 JS = [p for p in JS if not (p.startswith('src/chapters/') and p.split('/')[2] in DRAFT)]
-# углублённый материал главы (режим «Углублённо»): src/chapters/<id>/adv.js подключается сразу после index.js, если файл есть
-JS = [x for p in JS for x in ([p, p[:-len('index.js')] + 'adv.js'] if p.startswith('src/chapters/') and p.endswith('/index.js') and os.path.exists(os.path.join(ROOT, p[:-len('index.js')] + 'adv.js')) else [p])]
+# углублённый материал главы (режим «Углублённо»): src/chapters/<id>/adv.js (если файл есть) подключается перед advmode.js — ему нужен только реестр CHAPTERS_ADV из store.js
+_adv = sorted(os.path.join('src/chapters', d, 'adv.js') for d in os.listdir(os.path.join(ROOT, 'src/chapters'))
+              if d not in DRAFT and os.path.exists(os.path.join(ROOT, 'src/chapters', d, 'adv.js')))
+_k = JS.index('src/js/core/advmode.js')
+JS = JS[:_k] + _adv + JS[_k:]
 def read(p):
     with open(os.path.join(ROOT, p), encoding='utf-8') as f: return f.read()
 # ключи упражнений в тетрадь: поле key:'…' в src/chapters/*/classic.js

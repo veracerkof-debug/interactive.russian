@@ -40,7 +40,7 @@ function trStart(items){
  let tasks;
  if(TR.mode==='cols') tasks=groupCols(pool);
  else if(TR.mode==='err') tasks=groupErr(pool);
- else if(TR.mode==='mix'){const a=shuffle(pool),n=Math.ceil(a.length/3);tasks=shuffle([...a.slice(0,n).map(it=>({k:'pick',it})),...groupErr(a.slice(n,2*n)),...groupCols(a.slice(2*n))])}
+ else if(TR.mode==='mix'){const a=shuffle(pool),n=Math.ceil(a.length/3);tasks=shuffle([...a.slice(0,n).map(it=>({k:'pick',it})),...groupErr(a.slice(n,2*n)),...(()=>{const rest=a.slice(2*n),cols=groupCols(rest),kept=new Set(cols.flatMap(t=>t.items||[t.it]));return [...cols,...rest.filter(it=>!kept.has(it)).map(it=>({k:'pick',it}))]})()])}
  else tasks=pool.map(it=>({k:'pick',it}));
  TR.run={tasks,i:0,ok:0,tot:0,wrong:[],pool,re:!!items}; // re — повтор ошибок: в статистику (S.ans) не идёт
 }

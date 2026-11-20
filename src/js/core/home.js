@@ -89,16 +89,15 @@ function authorHTML(full){
 function todayHTML(){
  const k=streakInfo(),wk=weekDays(0),wt=wk.reduce((s,x)=>s+x.sec,0);
  const head=k.alive||k.today?`${k.n} ${dayWord(k.n)} подряд`:'Дни занятий подряд';
- const msg=k.st==='happy'?'Сегодня день засчитан.':k.st==='nudge'?'Сегодня ещё не занимались — хватит нескольких минут.':'Серия начнётся с первого дня занятий.';
+ const msg=wt?`<b>${fmtDur(wt)}</b> за неделю`:k.st==='nudge'?'Сегодня хватит нескольких минут':'Дни отметятся здесь сами';
  return `<section class="hmsec hmbox hmstreak hmweek hmtoday" aria-label="Дни занятий подряд">
- <div class="hmsk">${mascotHTML(k.st)}<div class="b"><h2 class="hmh">${head}</h2><p class="hmnote">${msg}</p></div></div>
- <div class="hmdays" role="img" aria-label="Дни занятий на этой неделе: ${wk.filter(x=>x.on).map(x=>x.wd).join(', ')||'пока нет'}">${wk.map(x=>`<span class="hmday${x.on?' on':''}${x.today?' td':''}${x.fut?' fut':''}" title="${x.wd}: ${x.sec?fmtDur(x.sec):'—'}"><i>${x.on?HI.ok:''}</i><small>${x.wd}</small></span>`).join('')}</div>
- <p class="hmtime"><span class="a">${wt?`<b>${fmtDur(wt)}</b> за неделю`:'Дни занятий отметятся здесь сами.'}</span><button class="linkbtn hmmore" data-hgo="me">Мои результаты</button></p></section>`;
+ <div class="hmsk">${mascotHTML(k.st)}<div class="b"><h2 class="hmh">${head}</h2><p class="hmnote hmtime">${msg}</p></div>
+ <div class="hmdays" role="img" aria-label="Дни занятий на этой неделе: ${wk.filter(x=>x.on).map(x=>x.wd).join(', ')||'пока нет'}">${wk.map(x=>`<span class="hmday${x.on?' on':''}${x.today?' td':''}${x.fut?' fut':''}" title="${x.wd}: ${x.sec?fmtDur(x.sec):'—'}"><i>${x.on?HI.ok:''}</i><small>${x.wd}</small></span>`).join('')}</div></div></section>`;
 }
 function homeHTML(){
  const ready=ALLCH.filter(m=>CHAPTERS[m.id]),nles=ready.reduce((s,m)=>s+CHAPTERS[m.id].lessons.length,0);
  const hasName=!!((S.prof||{}).name||'').trim(),dl=dateLine();
- let h=`<div class="wrap hm"><header class="hmtop"><div class="hmhi"><h1>${greet()}</h1><div class="sub">${dl}${hasName?'':`${dl?'<span class="hmdot"></span>':''}<button class="linkbtn" data-hgo="me" data-hname>Указать имя</button>`}</div></div>
+ let h=`<div class="wrap hm" id="hmwrap"><header class="hmtop"><div class="hmhi"><h1>${greet()}</h1><div class="sub">${dl}${hasName?'':`${dl?'<span class="hmdot"></span>':''}<button class="linkbtn" data-hgo="me" data-hname>Указать имя</button>`}</div></div>
  <button class="hmava" data-hgo="me" aria-label="Мои результаты и профиль" title="Мои результаты">${avaHTML('ava')}</button></header>
  <div class="hmgrid"><div class="hmcol">${contHTML()}
  <input class="bsearch" id="q" type="search" placeholder="Найти тему, урок, термин или слово" autocomplete="off" aria-label="Поиск по учебнику">
@@ -112,17 +111,17 @@ function homeHTML(){
  </section></div><div class="hmcol">${nextHTML()}`;
  // одним списком: заданное, что повторить, что не доведено — не больше четырёх строк
  const rows=[];
- recentList().slice(0,2).forEach(x=>{const m=chById(x.ch),list=clParse(CHAPTERS[x.ch],String(x.r).replace(/,/g,', '));if(!list.length)return;
+ recentList().slice(0,1).forEach(x=>{const m=chById(x.ch),list=clParse(CHAPTERS[x.ch],String(x.r).replace(/,/g,', '));if(!list.length)return;
   const dn=list.filter(n=>S.done['cl-'+x.ch+'-'+n]).length;
   rows.push(`<button class="hmrow" data-hex="${x.ch}:${x.r}"><span class="b"><b>${m.t}, ${list.length>1?'упражнения':'упражнение'} ${clFmt(list)}</b><small>задано · ${list.length>1?`сделано ${dn} из ${list.length}`:dn?'сделано':'в тетрадь'}</small></span><span class="hmact">Открыть</span></button>`)});
- weakLessons(2).forEach(w=>{const L=LES[w.id],m=chById(L.ch);
+ weakLessons(1).forEach(w=>{const L=LES[w.id],m=chById(L.ch);
   const why=w.g===ST.WEAK_G?'тест пока не сдан':`${w.bad} ${plural(w.bad,'ошибка','ошибки','ошибок')} в последних ${w.of} ответах`;
   rows.push(`<button class="hmrow" data-hrep="${w.id}"><span class="b"><b>${m.t}, урок ${L.n}</b><small>повторить · ${why}</small></span><span class="hmact">Повторить</span></button>`)});
- unfinished(2).forEach(u=>{const m=chById(u.c.id);
+ unfinished(1).forEach(u=>{const m=chById(u.c.id);
   rows.push(`<button class="hmrow" data-hun="${u.c.id}"><span class="b"><b>${m.t}</b><small>не доведено · осталось: ${leftText(u.left)}</small></span><span class="hmact">К тестам</span></button>`)});
- if(rows.length)h+=`<section class="hmsec"><h2 class="hmh">Дальше</h2><div class="hmlist">${rows.slice(0,4).join('')}</div></section>`;
+ if(rows.length)h+=`<section class="hmsec hmmore2"><h2 class="hmh">Дальше</h2><div class="hmlist">${rows.slice(0,2).join('')}</div></section>`;
  h+=todayHTML();
- return h+`</div></div>${authorHTML(false)}</div>`;
+ return (h+`</div></div>${authorHTML(false)}</div>`).replace(' id="hmwrap"',rows.length?' data-rows="1"':'');
 }
 
 // ---------- кабинет ----------

@@ -937,6 +937,59 @@ h4[id],.bkles{scroll-margin-top:72px}
 @keyframes spIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes spBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @media (prefers-reduced-motion:reduce){#splash *{animation:none!important}#splash{transition:none}}
+
+/* ---------- главная помещается на один экран ---------- */
+.wrap.hm{gap:10px;padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:6px}
+.hm .hmtop{padding-top:0}
+.hm .hmtop h1{font-size:23px;letter-spacing:-.3px}
+.hm .hmtop .sub{min-height:20px;font-size:13.5px}
+.hm .hmtop .sub .linkbtn{min-height:28px}
+.hm .hmava{width:44px;height:44px}.hm .ava{width:40px;height:40px}
+.hm .hmcol>.hmnote{display:none}
+.hmcont{padding:14px 16px;gap:2px;border-radius:20px}
+.hmcont .t{font-size:21px;margin-top:0}
+.hmcont .s{font-size:14px}
+.hmnum{font-size:36px;top:6px}
+.hmcont .hmcta{margin-top:8px;min-height:44px;font-size:15.5px}
+.hm .bsearch{min-height:44px}
+.hmbook{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px}
+.hmbook .hmbig{grid-column:1/-1;min-height:52px;padding:6px 10px}
+.hmbook .hmbig b{font-size:17px}
+.hmref{display:contents}
+.hmref button{flex-direction:row;justify-content:center;gap:6px;min-height:44px;padding:6px}
+.hmref svg{margin:0}
+.hm .hmsec{gap:6px}
+.hm .hmsec>.hmh{font-size:14px;color:var(--l2);font-weight:600}
+.hm .hmrow{min-height:52px;padding:6px 10px 6px 12px}
+.hm .hmrow b{font-size:14.5px}
+.hm .hmrow small{font-size:12.5px}
+.hm .hmnext .hmrow .hmstep{display:none}
+.hm .hmact{min-height:32px;padding:0 10px;font-size:13px}
+.hmtoday{padding:10px 12px;gap:0}
+.hmtoday .hmsk{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-areas:"m b" "d d";gap:2px 10px;align-items:center}
+.hmtoday .mk{grid-area:m;width:44px;height:44px}
+.hmtoday .b{grid-area:b}
+.hmtoday .hmdays{grid-area:d;margin-top:2px}
+.hmtoday .hmh{font-size:15px;margin:0}
+.hmtoday .hmtime{margin:0;font-size:13px;display:block}
+.hmtoday .hmday{gap:1px}
+.hmtoday .hmday i{width:24px;height:24px}
+.hmtoday .hmday i svg{width:12px;height:12px}
+.hmtoday .hmday small{font-size:11px}
+.auth.line{margin:2px 0 4px;padding-top:6px;font-size:12.5px;line-height:1.3;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0 8px}
+.auth.line .al{min-height:32px}.auth.line .al a{min-height:32px}
+.hm .hmcol>*{animation:none}
+@media (max-height:760px){.hm .hmtop .sub{display:none}.hmcont .s{display:none}.hmcont .hmcta{margin-top:6px}.hmbook .hmbig small{display:none}.hmbook .hmbig{min-height:44px}}
+@media (min-width:1100px){.wrap.hm{gap:16px}.hm .hmtop h1{font-size:28px}}
+
+.hmwhere{display:none}
+.hm .hmsec>.hmh{display:none}
+.hm .hmnext .hmstep{display:block;font-size:12px}
+.hm .hmnext .hmstep::before{content:"Дальше по маршруту · "}
+.hm .hmrow small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.hm .hmrow .b{min-width:0}
+@media (max-height:760px){.hm[data-rows] .hmnext{display:none}}
+@media (max-height:690px){.hm .hmbook .hmbig small,.hm .hmtop .sub{display:none}.hmcont .hmcta{min-height:40px}.hm .bsearch{min-height:40px}.wrap.hm{gap:8px}.hmtoday .hmday small{display:none}}
 /* Широкие экраны (компьютер, ≥1100px): страница шире, в главе — боковое содержание.
    На телефоне и планшете ничего не меняется: .chside скрыт, .chgrid — обычный поток. */
 .chside{display:none}
@@ -90299,16 +90352,15 @@ function authorHTML(full){
 function todayHTML(){
  const k=streakInfo(),wk=weekDays(0),wt=wk.reduce((s,x)=>s+x.sec,0);
  const head=k.alive||k.today?`${k.n} ${dayWord(k.n)} подряд`:'Дни занятий подряд';
- const msg=k.st==='happy'?'Сегодня день засчитан.':k.st==='nudge'?'Сегодня ещё не занимались — хватит нескольких минут.':'Серия начнётся с первого дня занятий.';
+ const msg=wt?`<b>${fmtDur(wt)}</b> за неделю`:k.st==='nudge'?'Сегодня хватит нескольких минут':'Дни отметятся здесь сами';
  return `<section class="hmsec hmbox hmstreak hmweek hmtoday" aria-label="Дни занятий подряд">
- <div class="hmsk">${mascotHTML(k.st)}<div class="b"><h2 class="hmh">${head}</h2><p class="hmnote">${msg}</p></div></div>
- <div class="hmdays" role="img" aria-label="Дни занятий на этой неделе: ${wk.filter(x=>x.on).map(x=>x.wd).join(', ')||'пока нет'}">${wk.map(x=>`<span class="hmday${x.on?' on':''}${x.today?' td':''}${x.fut?' fut':''}" title="${x.wd}: ${x.sec?fmtDur(x.sec):'—'}"><i>${x.on?HI.ok:''}</i><small>${x.wd}</small></span>`).join('')}</div>
- <p class="hmtime"><span class="a">${wt?`<b>${fmtDur(wt)}</b> за неделю`:'Дни занятий отметятся здесь сами.'}</span><button class="linkbtn hmmore" data-hgo="me">Мои результаты</button></p></section>`;
+ <div class="hmsk">${mascotHTML(k.st)}<div class="b"><h2 class="hmh">${head}</h2><p class="hmnote hmtime">${msg}</p></div>
+ <div class="hmdays" role="img" aria-label="Дни занятий на этой неделе: ${wk.filter(x=>x.on).map(x=>x.wd).join(', ')||'пока нет'}">${wk.map(x=>`<span class="hmday${x.on?' on':''}${x.today?' td':''}${x.fut?' fut':''}" title="${x.wd}: ${x.sec?fmtDur(x.sec):'—'}"><i>${x.on?HI.ok:''}</i><small>${x.wd}</small></span>`).join('')}</div></div></section>`;
 }
 function homeHTML(){
  const ready=ALLCH.filter(m=>CHAPTERS[m.id]),nles=ready.reduce((s,m)=>s+CHAPTERS[m.id].lessons.length,0);
  const hasName=!!((S.prof||{}).name||'').trim(),dl=dateLine();
- let h=`<div class="wrap hm"><header class="hmtop"><div class="hmhi"><h1>${greet()}</h1><div class="sub">${dl}${hasName?'':`${dl?'<span class="hmdot"></span>':''}<button class="linkbtn" data-hgo="me" data-hname>Указать имя</button>`}</div></div>
+ let h=`<div class="wrap hm" id="hmwrap"><header class="hmtop"><div class="hmhi"><h1>${greet()}</h1><div class="sub">${dl}${hasName?'':`${dl?'<span class="hmdot"></span>':''}<button class="linkbtn" data-hgo="me" data-hname>Указать имя</button>`}</div></div>
  <button class="hmava" data-hgo="me" aria-label="Мои результаты и профиль" title="Мои результаты">${avaHTML('ava')}</button></header>
  <div class="hmgrid"><div class="hmcol">${contHTML()}
  <input class="bsearch" id="q" type="search" placeholder="Найти тему, урок, термин или слово" autocomplete="off" aria-label="Поиск по учебнику">
@@ -90322,17 +90374,17 @@ function homeHTML(){
  </section></div><div class="hmcol">${nextHTML()}`;
  // одним списком: заданное, что повторить, что не доведено — не больше четырёх строк
  const rows=[];
- recentList().slice(0,2).forEach(x=>{const m=chById(x.ch),list=clParse(CHAPTERS[x.ch],String(x.r).replace(/,/g,', '));if(!list.length)return;
+ recentList().slice(0,1).forEach(x=>{const m=chById(x.ch),list=clParse(CHAPTERS[x.ch],String(x.r).replace(/,/g,', '));if(!list.length)return;
   const dn=list.filter(n=>S.done['cl-'+x.ch+'-'+n]).length;
   rows.push(`<button class="hmrow" data-hex="${x.ch}:${x.r}"><span class="b"><b>${m.t}, ${list.length>1?'упражнения':'упражнение'} ${clFmt(list)}</b><small>задано · ${list.length>1?`сделано ${dn} из ${list.length}`:dn?'сделано':'в тетрадь'}</small></span><span class="hmact">Открыть</span></button>`)});
- weakLessons(2).forEach(w=>{const L=LES[w.id],m=chById(L.ch);
+ weakLessons(1).forEach(w=>{const L=LES[w.id],m=chById(L.ch);
   const why=w.g===ST.WEAK_G?'тест пока не сдан':`${w.bad} ${plural(w.bad,'ошибка','ошибки','ошибок')} в последних ${w.of} ответах`;
   rows.push(`<button class="hmrow" data-hrep="${w.id}"><span class="b"><b>${m.t}, урок ${L.n}</b><small>повторить · ${why}</small></span><span class="hmact">Повторить</span></button>`)});
- unfinished(2).forEach(u=>{const m=chById(u.c.id);
+ unfinished(1).forEach(u=>{const m=chById(u.c.id);
   rows.push(`<button class="hmrow" data-hun="${u.c.id}"><span class="b"><b>${m.t}</b><small>не доведено · осталось: ${leftText(u.left)}</small></span><span class="hmact">К тестам</span></button>`)});
- if(rows.length)h+=`<section class="hmsec"><h2 class="hmh">Дальше</h2><div class="hmlist">${rows.slice(0,4).join('')}</div></section>`;
+ if(rows.length)h+=`<section class="hmsec hmmore2"><h2 class="hmh">Дальше</h2><div class="hmlist">${rows.slice(0,2).join('')}</div></section>`;
  h+=todayHTML();
- return h+`</div></div>${authorHTML(false)}</div>`;
+ return (h+`</div></div>${authorHTML(false)}</div>`).replace(' id="hmwrap"',rows.length?' data-rows="1"':'');
 }
 
 // ---------- кабинет ----------

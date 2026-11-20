@@ -292,3 +292,12 @@
 .hmcont{padding-block:clamp(14px,calc(3.4dvh - 15px),28px)}
 .hmtoday{padding-block:clamp(10px,calc(2.4dvh - 10px),20px)}
 .hm .hmrow{min-height:clamp(52px,calc(8dvh - 16px),68px)}
+
+/* экран «Об авторе»: проекты */
+.projs{display:flex;flex-direction:column;gap:10px;margin:8px 0 24px}
+.proj{display:flex;gap:14px;align-items:center;background:var(--cell);border:1px solid var(--sep);border-radius:18px;padding:14px;text-decoration:none;color:var(--ink);min-height:44px}
+.proj:hover{border-color:var(--tint)}
+.proj .b{display:flex;flex-direction:column;gap:2px;min-width:0}
+.proj b{font-size:16px;font-weight:650}.proj small{font-size:13.5px;line-height:1.4;color:var(--l2)}
+.pico{flex:none;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--pc);background:color-mix(in srgb,var(--pc) 14%,transparent)}
+@media(min-width:900px){.projs{display:grid;grid-template-columns:1fr 1fr}}

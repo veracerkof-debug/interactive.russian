@@ -13,7 +13,7 @@ function hashFor(r){
  if(r.v==='word')return 'w-'+encodeURIComponent(r.id);
  if(r.v==='deck')return 'deck-'+r.id;
  if(r.v==='study')return 'study-'+r.id;
- if(r.v==='home'||r.v==='me')return r.v;
+ if(r.v==='home'||r.v==='me'||r.v==='about')return r.v;
  if(r.v==='step')return 'step-'+r.n;
  if(r.v==='opc')return 'opc-'+r.id;
  if(r.v!=='ch')return viewHash();
@@ -58,6 +58,7 @@ function fromHash(){const h=location.hash.slice(1);
  if(om&&opcOk(om[1])){route={v:'opc',id:om[1]};TSV=TS&&TS.opc===om[1]?'run':'list';return}
  if(h===''||h==='home'){route={v:'home'};return}
  if(h==='me'){route={v:'me'};return}
+ if(h==='about'){route={v:'about'};return}
  if(h.startsWith('w-')) route={v:'word',id:decodeURIComponent(h.slice(2))};
  else if(h.startsWith('deck-')&&DECKS[h.slice(5)]) route={v:'deck',id:h.slice(5)};
  else if(h.startsWith('study-')&&DECKS[h.slice(6)]){route={v:'study',id:h.slice(6)};startStudy(route.id)}
@@ -298,6 +299,7 @@ function render(){
  else if(route.v==='word') app.innerHTML=wordHTML(route.id);
  else if(route.v==='home') app.innerHTML=homeHTML();
  else if(route.v==='me') app.innerHTML=meHTML();
+ else if(route.v==='about') app.innerHTML=aboutHTML();
  else if(route.v==='step') app.innerHTML=stepHTML(route.n);
  else if(route.v==='opc') app.innerHTML=opcHTML(route.id);
  else app.innerHTML=tocHTML();

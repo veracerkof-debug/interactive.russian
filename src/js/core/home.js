@@ -66,6 +66,20 @@ function streakHTML(me){
 }
 // подпись автора: компактная строка (главная) или карточка (содержание, кабинет); ссылки открываются только по нажатию
 const AUTH={name:'Александр Ким',tg:'Alxdrkm',mail:'kim.alexandr.alexandrovich@gmail.com'};
+// проекты автора: значки — простые встроенные SVG (без сети); ссылки открываются только по нажатию
+const PROJ=[
+ {t:'Интерактивный русский',d:'Этот учебник: теория, упражнения, словари и интерактивные задания в одном месте.',u:'https://veracerkof-debug.github.io/interactive.russian/',c:'#c2693a',g:'<path d="M5 5h9a4 4 0 0 1 4 4v10H9a4 4 0 0 1-4-4z"/><path d="M9 10h5M9 13.5h3"/>',me:1},
+ {t:'Библиотека Филолога 2.0',d:'Сборник нужной литературы в одной группе Telegram — архив, который дорабатывается для удобной работы.',u:'https://t.me/+Nfi89Owq-VE3Zjhi',c:'#2f7fb0',g:'<path d="M4 5h4v14H4zM10 5h4v14h-4z"/><path d="m16 6 3.5-1 3 13-3.5 1z"/>'},
+ {t:'Deixis',d:'Трансляция презентации или текста на любой другой экран с управлением с телефона.',u:'https://veracerkof-debug.github.io/deixis-app/',c:'#6b5bb0',g:'<rect x="3" y="5" width="18" height="11" rx="2"/><path d="M9 20h6M12 16v4"/><path d="m10.5 8.5 3.5 2-3.5 2z"/>'},
+ {t:'Melete',d:'Приложение для музыканта: все нужные инструменты в одном месте, без рекламы и без трекинга.',u:'https://veracerkof-debug.github.io/melete-app/show/',c:'#3f8f6b',g:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>'}
+];
+const projIco=p=>`<span class="pico" style="--pc:${p.c}"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p.g}</svg></span>`;
+function aboutHTML(){
+ return `<div class="bkhbar"><div class="in"><button class="back" data-hgo="home">‹ Главная</button><span class="tools"><button class="ibtn" data-hgo="toc">${ico('book',18)}Учебник</button></span></div></div>
+ <div class="wrap about"><header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><h2>Об авторе</h2><div class="sub">${AUTH.name}</div></div></header>
+ <section class="auth card"><p class="an">${AUTH.name}</p><p>Литератор, магистрант первого курса; преподаёт русский язык. «Интерактивный русский» написан и выстроен автором с помощью Claude (Anthropic): сбор, проверка и оформление материала.</p><p>Учебник бесплатный; данные ученика хранятся только на его устройстве. Нашли ошибку или есть предложение? Напишите — отвечу.</p><p class="al">${authLinks()}</p><p class="am">${AUTH.mail}</p></section>
+ <div class="kick" style="margin-top:14px">Другие проекты</div><div class="projs">${PROJ.map(p=>`<a class="proj" href="${p.u}" target="_blank" rel="noopener noreferrer">${projIco(p)}<span class="b"><b>${p.t}${p.me?' · вы здесь':''}</b><small>${p.d}</small></span></a>`).join('')}</div></div>`;
+}
 const authLinks=()=>`<a href="https://t.me/${AUTH.tg}" target="_blank" rel="noopener noreferrer">Telegram&nbsp;@${AUTH.tg}</a><span class="hmdot"></span><a href="mailto:${AUTH.mail}">Написать на почту</a>`;
 function authorHTML(full){
  if(!full)return `<footer class="auth line" aria-label="Об авторе"><p>Автор учебника — <b>${AUTH.name}</b></p><p class="al">${authLinks()}</p></footer>`;
@@ -73,7 +87,7 @@ function authorHTML(full){
  <p class="an">${AUTH.name}</p>
  <p>Учитель русского языка. Учебник написан и выстроен автором — с помощью Claude (Anthropic), который помогал со сбором, проверкой и оформлением материала.</p>
  <p>Нашли ошибку или есть предложение? Напишите — отвечу.</p>
- <p class="al">${authLinks()}</p><p class="am">${AUTH.mail}</p></section>`;
+ <p class="al">${authLinks()}<span class="hmdot"></span><button class="linkbtn" data-hgo="about">Другие проекты автора</button></p><p class="am">${AUTH.mail}</p></section>`;
 }
 // «Сегодня»: серия, маскот и неделя в одной спокойной карточке
 function todayHTML(){

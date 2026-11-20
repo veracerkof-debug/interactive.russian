@@ -255,7 +255,6 @@
 .hm .hmrow{min-height:52px;padding:6px 10px 6px 12px}
 .hm .hmrow b{font-size:14.5px}
 .hm .hmrow small{font-size:12.5px}
-.hm .hmnext .hmrow .hmstep{display:none}
 .hm .hmact{min-height:32px;padding:0 10px;font-size:13px}
 .hmtoday{padding:10px 12px;gap:0}
 .hmtoday .hmsk{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-areas:"m b" "d d";gap:2px 10px;align-items:center}

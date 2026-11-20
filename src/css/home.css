@@ -301,3 +301,4 @@
 .proj b{font-size:16px;font-weight:650}.proj small{font-size:13.5px;line-height:1.4;color:var(--l2)}
 .pico{flex:none;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--pc);background:color-mix(in srgb,var(--pc) 14%,transparent)}
 @media(min-width:900px){.projs{display:grid;grid-template-columns:1fr 1fr}}
+.pico.img{background:none;overflow:hidden}.pico.img img{width:48px;height:48px;border-radius:14px;display:block}

@@ -91,7 +91,7 @@ function tocHTML(){
  } else if(V==='gloss') h+=glossView();
  else if(V==='dict') h+=dictView();
  else h+=bookTOC();
- return h+'</div>';
+ return h+authorHTML(true)+'</div>';
 }
 
 // вкладки главы: только то, что в главе уже есть (глава может быть пока только теорией)

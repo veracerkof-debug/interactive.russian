@@ -41,24 +41,14 @@ function contHTML(){
  <span class="hmcta">${CONT_GO[tab]}${HI.chev}</span></button>`;
 }
 // ---------- серия «дни подряд» и маскот ----------
-// Маскот «Ёшка» — по образцу Мелеты (Melete): лицо из тонких линий в круге, но каждая черта — буква русского языка:
-// брови — «п» (арка), глаза — «о» (кольца) или «п» (закрытые/радостные), нос — мягкий знак «ь», рот — «п», перевёрнутая, или «о»;
-// украшения — «Ё» (искры при радости), «з з» (дремота), «?» (ждёт). Цвет — currentColor и токены темы: светлая и тёмная.
-// Состояния: happy (сегодня занимались), nudge (серия идёт, сегодня ещё нет), calm (серии нет).
-const MKP=d=>`<path class="mk-l" d="${d}"/>`;
-const MK_BROW=(y,l=0)=>MKP(`M${27+l} ${y+5}v-1.5q0-3.5 3.5-3.5h7q3.5 0 3.5 3.5v1.5`)+MKP(`M${57+l} ${y+5}v-1.5q0-3.5 3.5-3.5h7q3.5 0 3.5 3.5v1.5`);
-const MK_EYE_O=(dx=0)=>`<ellipse class="mk-l" cx="${37+dx}" cy="47" rx="3.6" ry="4.6"/><ellipse class="mk-l" cx="${64+dx}" cy="47" rx="3.6" ry="4.6"/>`;
-const MK_EYE_UP=MKP('M31 50v-1.5q0-4 4.5-4t4.5 4v1.5')+MKP('M58 50v-1.5q0-4 4.5-4t4.5 4v1.5');   // п — радость
-const MK_EYE_DN=MKP('M31 45v1.5q0 4 4.5 4t4.5-4v-1.5')+MKP('M58 45v1.5q0 4 4.5 4t4.5-4v-1.5');   // п вверх ногами — закрыты
-const MK_NOSE=MKP('M47 52v14M47 59h4q5 0 5 3.5t-5 3.5h-4');                                       // ь
-const MK_MOUTH_BIG=MKP('M37 74v2q0 8 13 8t13-8v-2');
-const MK_MOUTH_SM=MKP('M42 78v1q0 4 8 4t8-4v-1');
-const MK_MOUTH_O='<ellipse class="mk-l" cx="50" cy="79" rx="3.4" ry="4.4"/>';
+// Маскот «Ёшка» — минималистичный, в духе Мелеты и Notion: круг и несколько тонких линий, без украшений и букв.
+// Состояния: happy (сегодня занимались) — глаза-дуги и улыбка; nudge (серия идёт, сегодня ещё нет) — глаза-точки и ровный рот;
+// calm (серии нет) — закрытые глаза и лёгкая улыбка. Цвет — токены темы: светлая и тёмная.
 function mascotHTML(st){
- const T=(x,y,ch,sz)=>`<text class="mk-a" x="${x}" y="${y}" font-size="${sz}">${ch}</text>`;
- const f=st==='happy'?MK_BROW(29)+MK_EYE_UP+MK_NOSE+MK_MOUTH_BIG+T(82,26,'Ё',16)+T(17,32,'ё',10)
-  :st==='nudge'?MK_BROW(33)+MK_EYE_O(4)+MK_NOSE+MK_MOUTH_O+T(80,28,'?',20)
-  :MK_BROW(34)+MK_EYE_DN+MK_NOSE+MK_MOUTH_SM+T(76,30,'з',15)+T(86,20,'з',10);
+ const L=d=>`<path class="mk-l" d="${d}"/>`,D=(x,y)=>`<circle class="mk-d" cx="${x}" cy="${y}" r="3.4"/>`;
+ const f=st==='happy'?L('M30 46q5-8 10 0')+L('M60 46q5-8 10 0')+L('M36 63q14 16 28 0')
+  :st==='nudge'?D(36,46)+D(64,46)+L('M40 68h20')
+  :L('M30 46q5 6 10 0')+L('M60 46q5 6 10 0')+L('M41 66q9 6 18 0');
  return `<svg class="mk mk-${st}" viewBox="0 0 100 100" width="76" height="76" role="img" aria-label="${st==='happy'?'Ёшка радуется':st==='nudge'?'Ёшка ждёт':'Ёшка спокоен'}">
  <circle class="mk-ring" cx="50" cy="50" r="46"/>${f}</svg>`;
 }

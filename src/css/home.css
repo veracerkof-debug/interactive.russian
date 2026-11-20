@@ -219,7 +219,7 @@
 /* заставка на 3 секунды */
 #splash{position:fixed;inset:0;z-index:9999;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;text-align:center;cursor:pointer;transition:opacity .45s ease;font-family:inherit}
 #splash.out{opacity:0;pointer-events:none}
-#splash .sp-mark{width:84px;height:84px;border-radius:24px;display:grid;place-items:center;background:color-mix(in srgb,var(--tint) 16%,var(--cell));border:1px solid color-mix(in srgb,var(--tint) 32%,var(--sep));color:var(--tint-text);font-size:46px;font-weight:700;font-family:Georgia,"Times New Roman",serif;animation:spIn .7s ease both}
+#splash .sp-mark{display:grid;place-items:center;color:var(--tint-text);animation:spIn .7s ease both}
 #splash h1{font-size:28px;letter-spacing:-.4px;margin:14px 0 0;animation:spIn .7s .12s ease both}
 #splash .sp-sub{color:var(--l2);font-size:15px;margin:0;animation:spIn .7s .2s ease both}
 #splash .sp-by{margin-top:34px;font-size:13.5px;line-height:1.55;color:var(--l2);animation:spIn .7s .5s ease both}
@@ -302,3 +302,13 @@
 .pico{flex:none;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--pc);background:color-mix(in srgb,var(--pc) 14%,transparent)}
 @media(min-width:900px){.projs{display:grid;grid-template-columns:1fr 1fr}}
 .pico.img{background:none;overflow:hidden}.pico.img img{width:48px;height:48px;border-radius:14px;display:block}
+
+/* логотип: ять (Ѣ) в рамке-экслибрисе и надпись в старом книжном стиле */
+.logo-mk{display:block}
+.wordmark{font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;font-weight:600;font-variant:small-caps;letter-spacing:.8px;line-height:1.15;color:var(--ink)}
+.wordmark em{font-style:italic;color:var(--tint-text);font-weight:600}
+#splash h1.wordmark{font-size:30px;margin:16px 0 0}
+.sp-orn{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0 6px;color:var(--tint-text);animation:spIn .7s .16s ease both}
+.sp-orn i{display:block;width:44px;height:1px;background:currentColor;opacity:.55}.sp-orn b{font-size:10px;font-weight:400}
+.abrand{display:flex;align-items:center;gap:14px;margin:4px 0 14px}.abrand .logo-mk{width:64px;height:64px;flex:none;color:var(--tint-text)}
+.abrand .wordmark{font-size:23px;margin:0}

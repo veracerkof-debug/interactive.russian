@@ -6,6 +6,25 @@
 
 <div id="app"></div>
 
+<div id="splash" role="status" aria-label="Загрузка">
+  <div class="sp-mark" aria-hidden="true">Ё</div>
+  <h1>Русский язык</h1>
+  <p class="sp-sub">Интерактивный учебник</p>
+  <p class="sp-by"><b>Автор — Александр Ким</b>Создано автором с помощью Claude<br><a href="https://t.me/Alxdrkm" target="_blank" rel="noopener noreferrer">Telegram&nbsp;@Alxdrkm</a><br><a href="mailto:kim.alexandr.alexandrovich@gmail.com">kim.alexandr.alexandrovich@gmail.com</a></p>
+  <div class="sp-bar" aria-hidden="true"><i></i></div>
+</div>
+<script>
+(()=>{var s=document.getElementById('splash');if(!s)return;
+ // автоматические тесты (webdriver) заставку не ждут
+ if(navigator.webdriver){s.remove();return}
+ var gone=function(){s.classList.add('out');setTimeout(function(){s.remove()},500)};
+ s.addEventListener('click',function(e){if(!e.target.closest('a'))gone()});
+ // отсчёт — после загрузки страницы (файл тяжёлый): заставка видна около 3 секунд от начала загрузки, но не меньше 0,8 с
+ var go=function(){var d=Math.max(800,3000-performance.now()),b=s.querySelector('.sp-bar i');
+  if(b){b.style.animationDuration=d+'ms';b.style.animationPlayState='running'}setTimeout(gone,d)};
+ if(document.readyState==='complete')go();else window.addEventListener('load',go)})();
+</script>
+
 <script>
 (()=>{
 /*@JS*/

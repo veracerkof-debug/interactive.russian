@@ -184,3 +184,100 @@
 @keyframes mkhop{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}60%{transform:translateY(0)}}
 @media (prefers-reduced-motion:reduce){.mk-happy{animation:none}}
 @media (max-width:380px){.hmsk{gap:10px}.mk{width:60px;height:60px}}
+
+/* ---------- минималистичная главная ---------- */
+.hm .bsearch{margin:0}
+.hmbook{padding:6px;gap:6px}
+.hmbig{min-height:56px}
+.hmbig b{font-size:18px}
+.hmref button{min-height:60px;align-items:center;text-align:center;padding:8px 6px}
+.hmref b{font-size:14px}
+.hmref svg{margin-bottom:2px}
+.hmtoday .mk{width:52px;height:52px}
+.hmtoday .hmsk{gap:12px}
+.hmtoday .hmh{font-size:16px}
+.hmtoday .hmday i{width:32px;height:32px}
+.hmtoday .hmtime{align-items:center}
+
+/* подпись автора */
+.auth a{color:var(--tint-text);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--tint) 40%,transparent);text-underline-offset:3px;overflow-wrap:anywhere}
+.auth a:hover{text-decoration-color:currentColor}
+.auth.line{margin:10px 0 24px;padding-top:14px;border-top:1px solid var(--sep);text-align:center;font-size:13.5px;line-height:1.5;color:var(--l2)}
+.auth.line p{margin:0}
+.auth.line b{color:var(--ink);font-weight:600}
+.auth.line .al{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:0 2px;min-height:44px}
+.auth.line .al a{display:inline-flex;align-items:center;min-height:44px}
+.auth.card{background:var(--cell);border:1px solid var(--sep);border-radius:18px;padding:16px;margin:18px 0 8px;display:flex;flex-direction:column;gap:8px;font-size:14.5px;line-height:1.5;color:var(--l2);min-width:0}
+.auth.card p{margin:0}
+.auth.card .an{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+.auth.card .al{display:flex;flex-wrap:wrap;align-items:center;gap:0 2px}
+.auth.card .al a{display:inline-flex;align-items:center;min-height:44px}
+.auth.card .am{font-size:12.5px;color:var(--l3);overflow-wrap:anywhere}
+.wrap>.auth.card{margin-left:0;margin-right:0}
+
+/* заставка на 3 секунды */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;text-align:center;cursor:pointer;transition:opacity .45s ease;font-family:inherit}
+#splash.out{opacity:0;pointer-events:none}
+#splash .sp-mark{width:84px;height:84px;border-radius:24px;display:grid;place-items:center;background:color-mix(in srgb,var(--tint) 16%,var(--cell));border:1px solid color-mix(in srgb,var(--tint) 32%,var(--sep));color:var(--tint-text);font-size:46px;font-weight:700;font-family:Georgia,"Times New Roman",serif;animation:spIn .7s ease both}
+#splash h1{font-size:28px;letter-spacing:-.4px;margin:14px 0 0;animation:spIn .7s .12s ease both}
+#splash .sp-sub{color:var(--l2);font-size:15px;margin:0;animation:spIn .7s .2s ease both}
+#splash .sp-by{margin-top:34px;font-size:13.5px;line-height:1.55;color:var(--l2);animation:spIn .7s .5s ease both}
+#splash .sp-by b{display:block;color:var(--ink);font-size:16px;font-weight:600;margin-bottom:2px}
+#splash .sp-by a{color:var(--tint-text);text-decoration:none;overflow-wrap:anywhere}
+#splash .sp-bar{position:absolute;left:50%;bottom:calc(36px + env(safe-area-inset-bottom,0px));width:72px;height:3px;margin-left:-36px;border-radius:2px;background:var(--fill2);overflow:hidden}
+#splash .sp-bar i{display:block;height:100%;width:100%;background:var(--tint);transform-origin:left;animation:spBar 3s linear both paused}
+@keyframes spIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes spBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){#splash *{animation:none!important}#splash{transition:none}}
+
+/* ---------- главная помещается на один экран ---------- */
+.wrap.hm{gap:10px;padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:6px}
+.hm .hmtop{padding-top:0}
+.hm .hmtop h1{font-size:23px;letter-spacing:-.3px}
+.hm .hmtop .sub{min-height:20px;font-size:13.5px}
+.hm .hmtop .sub .linkbtn{min-height:28px}
+.hm .hmava{width:44px;height:44px}.hm .ava{width:40px;height:40px}
+.hm .hmcol>.hmnote{display:none}
+.hmcont{padding:14px 16px;gap:2px;border-radius:20px}
+.hmcont .t{font-size:21px;margin-top:0}
+.hmcont .s{font-size:14px}
+.hmnum{font-size:36px;top:6px}
+.hmcont .hmcta{margin-top:8px;min-height:44px;font-size:15.5px}
+.hm .bsearch{min-height:44px}
+.hmbook{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px}
+.hmbook .hmbig{grid-column:1/-1;min-height:52px;padding:6px 10px}
+.hmbook .hmbig b{font-size:17px}
+.hmref{display:contents}
+.hmref button{flex-direction:row;justify-content:center;gap:6px;min-height:44px;padding:6px}
+.hmref svg{margin:0}
+.hm .hmsec{gap:6px}
+.hm .hmsec>.hmh{font-size:14px;color:var(--l2);font-weight:600}
+.hm .hmrow{min-height:52px;padding:6px 10px 6px 12px}
+.hm .hmrow b{font-size:14.5px}
+.hm .hmrow small{font-size:12.5px}
+.hm .hmact{min-height:32px;padding:0 10px;font-size:13px}
+.hmtoday{padding:10px 12px;gap:0}
+.hmtoday .hmsk{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-areas:"m b" "d d";gap:2px 10px;align-items:center}
+.hmtoday .mk{grid-area:m;width:44px;height:44px}
+.hmtoday .b{grid-area:b}
+.hmtoday .hmdays{grid-area:d;margin-top:2px}
+.hmtoday .hmh{font-size:15px;margin:0}
+.hmtoday .hmtime{margin:0;font-size:13px;display:block}
+.hmtoday .hmday{gap:1px}
+.hmtoday .hmday i{width:24px;height:24px}
+.hmtoday .hmday i svg{width:12px;height:12px}
+.hmtoday .hmday small{font-size:11px}
+.auth.line{margin:2px 0 4px;padding-top:6px;font-size:12.5px;line-height:1.3;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0 8px}
+.auth.line .al{min-height:32px}.auth.line .al a{min-height:32px}
+.hm .hmcol>*{animation:none}
+@media (max-height:760px){.hm .hmtop .sub{display:none}.hmcont .s{display:none}.hmcont .hmcta{margin-top:6px}.hmbook .hmbig small{display:none}.hmbook .hmbig{min-height:44px}}
+@media (min-width:1100px){.wrap.hm{gap:16px}.hm .hmtop h1{font-size:28px}}
+
+.hmwhere{display:none}
+.hm .hmsec>.hmh{display:none}
+.hm .hmnext .hmstep{display:block;font-size:12px}
+.hm .hmnext .hmstep::before{content:"Дальше по маршруту · "}
+.hm .hmrow small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.hm .hmrow .b{min-width:0}
+@media (max-height:760px){.hm[data-rows] .hmnext{display:none}}
+@media (max-height:690px){.hm .hmbook .hmbig small,.hm .hmtop .sub{display:none}.hmcont .hmcta{min-height:40px}.hm .bsearch{min-height:40px}.wrap.hm{gap:8px}.hmtoday .hmday small{display:none}}

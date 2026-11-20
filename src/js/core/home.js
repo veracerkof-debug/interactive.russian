@@ -74,51 +74,54 @@ function streakHTML(me){
  ${me&&k.best>1?`<p class="hmnote">Больше всего подряд за последние месяцы: ${k.best} ${dayWord(k.best)}.</p>`:''}
  <p class="hmnote sm">День засчитывается, когда набралась минута активных занятий. Это не оценка.</p></div></div></section>`;
 }
+// подпись автора: компактная строка (главная) или карточка (содержание, кабинет); ссылки открываются только по нажатию
+const AUTH={name:'Александр Ким',tg:'Alxdrkm',mail:'kim.alexandr.alexandrovich@gmail.com'};
+const authLinks=()=>`<a href="https://t.me/${AUTH.tg}" target="_blank" rel="noopener noreferrer">Telegram&nbsp;@${AUTH.tg}</a><span class="hmdot"></span><a href="mailto:${AUTH.mail}">Написать на почту</a>`;
+function authorHTML(full){
+ if(!full)return `<footer class="auth line" aria-label="Об авторе"><p>Автор учебника — <b>${AUTH.name}</b></p><p class="al">${authLinks()}</p></footer>`;
+ return `<section class="auth card" aria-label="Об авторе"><span class="kick">Об авторе</span>
+ <p class="an">${AUTH.name}</p>
+ <p>Учитель русского языка. Учебник написан и выстроен автором — с помощью Claude (Anthropic), который помогал со сбором, проверкой и оформлением материала.</p>
+ <p>Нашли ошибку или есть предложение? Напишите — отвечу.</p>
+ <p class="al">${authLinks()}</p><p class="am">${AUTH.mail}</p></section>`;
+}
+// «Сегодня»: серия, маскот и неделя в одной спокойной карточке
+function todayHTML(){
+ const k=streakInfo(),wk=weekDays(0),wt=wk.reduce((s,x)=>s+x.sec,0);
+ const head=k.alive||k.today?`${k.n} ${dayWord(k.n)} подряд`:'Дни занятий подряд';
+ const msg=wt?`<b>${fmtDur(wt)}</b> за неделю`:k.st==='nudge'?'Сегодня хватит нескольких минут':'Дни отметятся здесь сами';
+ return `<section class="hmsec hmbox hmstreak hmweek hmtoday" aria-label="Дни занятий подряд">
+ <div class="hmsk">${mascotHTML(k.st)}<div class="b"><h2 class="hmh">${head}</h2><p class="hmnote hmtime">${msg}</p></div>
+ <div class="hmdays" role="img" aria-label="Дни занятий на этой неделе: ${wk.filter(x=>x.on).map(x=>x.wd).join(', ')||'пока нет'}">${wk.map(x=>`<span class="hmday${x.on?' on':''}${x.today?' td':''}${x.fut?' fut':''}" title="${x.wd}: ${x.sec?fmtDur(x.sec):'—'}"><i>${x.on?HI.ok:''}</i><small>${x.wd}</small></span>`).join('')}</div></div></section>`;
+}
 function homeHTML(){
  const ready=ALLCH.filter(m=>CHAPTERS[m.id]),nles=ready.reduce((s,m)=>s+CHAPTERS[m.id].lessons.length,0);
  const hasName=!!((S.prof||{}).name||'').trim(),dl=dateLine();
- let h=`<div class="wrap hm"><header class="hmtop"><div class="hmhi"><h1>${greet()}</h1><div class="sub">${dl}${hasName?'':`${dl?'<span class="hmdot"></span>':''}<button class="linkbtn" data-hgo="me" data-hname>Указать имя</button>`}</div></div>
+ let h=`<div class="wrap hm" id="hmwrap"><header class="hmtop"><div class="hmhi"><h1>${greet()}</h1><div class="sub">${dl}${hasName?'':`${dl?'<span class="hmdot"></span>':''}<button class="linkbtn" data-hgo="me" data-hname>Указать имя</button>`}</div></div>
  <button class="hmava" data-hgo="me" aria-label="Мои результаты и профиль" title="Мои результаты">${avaHTML('ava')}</button></header>
- <div class="hmgrid"><div class="hmcol">${contHTML()}${nextHTML()}
+ <div class="hmgrid"><div class="hmcol">${contHTML()}
+ <input class="bsearch" id="q" type="search" placeholder="Найти тему, урок, термин или слово" autocomplete="off" aria-label="Поиск по учебнику">
+ <div class="sres" id="sres"></div>
  <section class="hmbook" aria-label="Учебник">
-  <button class="hmbig" data-hgo="toc">${ico('book',26)}<span class="b"><b>Учебник</b><small>Содержание: ${ready.length} ${plural(ready.length,'глава','главы','глав')}, ${nles} ${plural(nles,'урок','урока','уроков')}</small></span>${HI.chev}</button>
-  <input class="bsearch" id="q" type="search" placeholder="Найти тему, урок, термин или слово" autocomplete="off" aria-label="Поиск по учебнику">
-  <div class="sres" id="sres"></div>
+  <button class="hmbig" data-hgo="toc">${ico('book',24)}<span class="b"><b>Учебник</b><small>${ready.length} ${plural(ready.length,'глава','главы','глав')} · ${nles} ${plural(nles,'урок','урока','уроков')}</small></span>${HI.chev}</button>
   <div class="hmref" role="group" aria-label="Словари и термины">
-   <button data-view="gloss">${ico('gloss',20)}<b>Термины</b><small>${GL.length} ${plural(GL.length,'термин','термина','терминов')}</small></button>
-   <button data-view="dict">${ico('dict',20)}<b>Словарь</b><small>${ALLW.length} ${plural(ALLW.length,'слово','слова','слов')}</small></button>
-   <button data-view="cards">${ico('cards',20)}<b>Карточки</b><small>${Object.keys(DECKS).length} ${plural(Object.keys(DECKS).length,'колода','колоды','колод')}</small></button></div>
- </section>`;
- // заданное недавно
- const rec=recentList();
- if(rec.length)h+=`<section class="hmsec"><h2 class="hmh">Заданное недавно</h2><div class="hmlist">${rec.map(x=>{const m=chById(x.ch),list=clParse(CHAPTERS[x.ch],String(x.r).replace(/,/g,', '));if(!list.length)return '';
+   <button data-view="gloss">${ico('gloss',20)}<b>Термины</b></button>
+   <button data-view="dict">${ico('dict',20)}<b>Словарь</b></button>
+   <button data-view="cards">${ico('cards',20)}<b>Карточки</b></button></div>
+ </section></div><div class="hmcol">${nextHTML()}`;
+ // одним списком: заданное, что повторить, что не доведено — не больше четырёх строк
+ const rows=[];
+ recentList().slice(0,1).forEach(x=>{const m=chById(x.ch),list=clParse(CHAPTERS[x.ch],String(x.r).replace(/,/g,', '));if(!list.length)return;
   const dn=list.filter(n=>S.done['cl-'+x.ch+'-'+n]).length;
-  return `<button class="hmrow" data-hex="${x.ch}:${x.r}"><span class="b"><b>${m.t}, ${list.length>1?'упражнения':'упражнение'} ${clFmt(list)}</b><small>${list.length>1?`отмечено сделанными: ${dn} из ${list.length}`:dn?'отмечено сделанным':'в тетрадь'}</small></span><span class="hmact">Открыть</span></button>`}).join('')}</div></section>`;
- h+=`</div><div class="hmcol">`;
- // стоит повторить
- const weak=weakLessons(3);
- if(weak.length)h+=`<section class="hmsec"><h2 class="hmh">Стоит повторить</h2><div class="hmlist">${weak.map(w=>{const L=LES[w.id],m=chById(L.ch);
+  rows.push(`<button class="hmrow" data-hex="${x.ch}:${x.r}"><span class="b"><b>${m.t}, ${list.length>1?'упражнения':'упражнение'} ${clFmt(list)}</b><small>задано · ${list.length>1?`сделано ${dn} из ${list.length}`:dn?'сделано':'в тетрадь'}</small></span><span class="hmact">Открыть</span></button>`)});
+ weakLessons(1).forEach(w=>{const L=LES[w.id],m=chById(L.ch);
   const why=w.g===ST.WEAK_G?'тест пока не сдан':`${w.bad} ${plural(w.bad,'ошибка','ошибки','ошибок')} в последних ${w.of} ответах`;
-  return `<button class="hmrow" data-hrep="${w.id}"><span class="b"><b>${m.t}, урок ${L.n}</b><small>${L.t} · ${why}</small></span><span class="hmact">Повторить</span></button>`}).join('')}</div></section>`;
- // не доведено до конца
- const unf=unfinished(3);
- if(unf.length)h+=`<section class="hmsec"><h2 class="hmh">Не доведено до конца</h2><div class="hmlist">${unf.map(u=>{const m=chById(u.c.id);
-  return `<button class="hmrow" data-hun="${u.c.id}"><span class="b"><b>${m.t}</b><small>осталось: ${leftText(u.left)}</small></span><span class="hmact">К тестам</span></button>`}).join('')}</div></section>`;
- // дни подряд
- h+=streakHTML(false);
- // моя неделя
- const wk=weekDays(0),wt=wk.reduce((s,x)=>s+x.sec,0);
- h+=`<section class="hmsec hmbox hmweek"><h2 class="hmh">Моя неделя</h2>
- <div class="hmdays" role="img" aria-label="Дни занятий на этой неделе: ${wk.filter(x=>x.on).map(x=>x.wd).join(', ')||'пока нет'}">${wk.map(x=>`<span class="hmday${x.on?' on':''}${x.today?' td':''}${x.fut?' fut':''}" title="${x.wd}: ${x.sec?fmtDur(x.sec):'—'}"><i>${x.on?HI.ok:''}</i><small>${x.wd}</small></span>`).join('')}</div>
- <p class="hmtime"><span class="a">${wt?`<b>${fmtDur(wt)}</b> за неделю`:'Дни занятий отметятся здесь сами.'}</span><span>время — не оценка</span></p></section>`;
- // освоено
- const any=PARTS.some(p=>{const g=partProgress(p);return g.conf||g.fam});
- h+=`<section class="hmsec hmbox"><div class="hmhr"><h2 class="hmh">Освоено</h2><button class="linkbtn hmmore" data-hgo="me">Подробнее</button></div>
- ${any?'':'<p class="hmnote">Урок попадёт сюда, когда тест по нему будет написан на 4 или 5.</p>'}
- <div class="hmparts">${PARTS.map(p=>{const g=partProgress(p);
-  return `<div class="hmpart${g.n?'':' soon'}" style="--pc:${p.c}"><div class="r"><b>${p.t}</b><span>${g.n?`уроков освоено: ${g.conf} из ${g.n}`:'раздел готовится'}</span></div>
-  ${g.n?`<div class="hmbar" aria-hidden="true"><i style="width:${g.conf/g.n*100}%"></i><i class="f" style="width:${g.fam/g.n*100}%"></i></div>`:''}</div>`}).join('')}</div></section>`;
- return h+'</div></div></div>';
+  rows.push(`<button class="hmrow" data-hrep="${w.id}"><span class="b"><b>${m.t}, урок ${L.n}</b><small>повторить · ${why}</small></span><span class="hmact">Повторить</span></button>`)});
+ unfinished(1).forEach(u=>{const m=chById(u.c.id);
+  rows.push(`<button class="hmrow" data-hun="${u.c.id}"><span class="b"><b>${m.t}</b><small>не доведено · осталось: ${leftText(u.left)}</small></span><span class="hmact">К тестам</span></button>`)});
+ if(rows.length)h+=`<section class="hmsec hmmore2"><h2 class="hmh">Дальше</h2><div class="hmlist">${rows.slice(0,2).join('')}</div></section>`;
+ h+=todayHTML();
+ return (h+`</div></div>${authorHTML(false)}</div>`).replace(' id="hmwrap"',rows.length?' data-rows="1"':'');
 }
 
 // ---------- кабинет ----------
@@ -193,7 +196,7 @@ function meDataHTML(){
 function meHTML(){
  return `<div class="bkhbar"><div class="in"><button class="back" data-hgo="home">‹ Главная</button><span class="tools"><button class="ibtn" data-hgo="toc">${ico('book',18)}Учебник</button></span></div></div>
  <div class="wrap me"><header class="chhead"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><h2>Мои результаты</h2><div class="sub">Что уже получается и к чему стоит вернуться.</div></div></header>
- <div class="megrid"><div class="mecol">${meProfHTML()}${meTopicsHTML()}</div><div class="mecol">${streakHTML(true)}${meTimeHTML()}${meNoteHTML()}${meDataHTML()}</div></div></div>`;
+ <div class="megrid"><div class="mecol">${meProfHTML()}${meTopicsHTML()}</div><div class="mecol">${streakHTML(true)}${meTimeHTML()}${meNoteHTML()}${meDataHTML()}${authorHTML(true)}</div></div></div>`;
 }
 function meRe(focus){const y=window.scrollY;render();window.scrollTo(0,y);if(focus){const el=document.querySelector(focus);if(el){el.focus({preventScroll:true});el.scrollIntoView({block:'nearest'})}}}
 function meBind(){

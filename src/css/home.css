@@ -179,6 +179,7 @@
 .mk{flex:0 0 auto;width:72px;height:72px;overflow:visible}
 .mk-ring{fill:color-mix(in srgb,var(--tint) 22%,var(--cell));stroke:color-mix(in srgb,var(--tint) 75%,var(--ink));stroke-width:2}
 .mk-l{fill:none;stroke:var(--ink);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.mk-d{fill:var(--ink)}
 .mk-a{fill:var(--tint-text);font-family:Georgia,"Times New Roman",serif;font-weight:700;text-anchor:middle}
 .mk-happy{animation:mkhop 2.4s ease-in-out 1}
 @keyframes mkhop{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}60%{transform:translateY(0)}}
@@ -281,3 +282,13 @@
 .hm .hmrow .b{min-width:0}
 @media (max-height:760px){.hm[data-rows] .hmnext{display:none}}
 @media (max-height:690px){.hm .hmbook .hmbig small,.hm .hmtop .sub{display:none}.hmcont .hmcta{min-height:40px}.hm .bsearch{min-height:40px}.wrap.hm{gap:8px}.hmtoday .hmday small{display:none}}
+
+/* минималистичный маскот: линии тоньше, круг без заливки-акцента */
+.mk-ring{fill:var(--cell);stroke:color-mix(in srgb,var(--ink) 80%,transparent);stroke-width:2.2}
+.mk-l{stroke-width:3;stroke:var(--ink)}
+/* главная занимает весь экран: свободное место делится между блоками, подпись — внизу */
+.wrap.hm{min-height:100vh;min-height:100dvh;box-sizing:border-box;gap:clamp(10px,calc(2.4dvh - 10px),26px)}
+.wrap.hm{justify-content:space-between}
+.hmcont{padding-block:clamp(14px,calc(3.4dvh - 15px),28px)}
+.hmtoday{padding-block:clamp(10px,calc(2.4dvh - 10px),20px)}
+.hm .hmrow{min-height:clamp(52px,calc(8dvh - 16px),68px)}
